@@ -32,7 +32,7 @@ const createOrder = async (req, res)=>{
             // req로 받아오는 부분
             UserName: userName,
             Address: address,
-            Phone: phone,
+            PhoneNumber: phone,
             Email: email,
             Products: products,
             // 생성하는 부분
@@ -59,7 +59,7 @@ const updateOrderInfo = async (req, res)=>{
         },{
             UserName: userName,
             Address: address,
-            Phone: phone,
+            PhoneNumber: phone,
             Email: email,
         })
         res.status(200).send();

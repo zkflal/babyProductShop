@@ -7,7 +7,7 @@ router.get("/:userName", findAllOrder);
 // order 생성
 router.post("/", createOrder);
 // 이름, 주소, 전화번호, 이메일 변경
-router.put("/info/:orderId", updateOrderInfo);
+router.put("/infos/:orderId", updateOrderInfo);
 // 주문 상태 변경
 router.put("/status/:orderId", updateOrderStatus);
 
