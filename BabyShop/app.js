@@ -4,17 +4,17 @@ const  path = require('path');
 const  cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const userRouter = require("./routes/userRouter");
+
 require("dotenv").config({ path: ".env.local" });
 const port = process.env.PORT;
 const uri = process.env.ATLAS_URI;
 
-
-
 const  app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -36,7 +36,11 @@ mongoose
   .catch((err) => {
     console.log("MongoDB 연결 실패 : ", err);
   });
-
+app.get('/',(req,res) => {
+  res.send("root");
+});
+//user 라우터
+app.use('/users',userRouter);
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -46,7 +50,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  // res.render('error');
 });
 
 module.exports = app;

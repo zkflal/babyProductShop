@@ -1,8 +1,8 @@
-const {Schema} = require('mongoose');
+const mongoose = require('mongoose');
 const shortId = require('./shortId');
 
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
     shortId, // null값 허용
     UserName:{
         type:String,
@@ -14,7 +14,6 @@ const userSchema = new Schema({
     },
     Email : {
         type:String,
-        required:true,
     },
     HashPwd : {
         type:String,
