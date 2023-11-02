@@ -11,13 +11,16 @@ require("dotenv").config({ path: ".env.local" });
 const port = process.env.PORT;
 const uri = process.env.ATLAS_URI;
 
-const orderRouter = require("./routes/orderRouter");
-
 const app = express();
+const orderRouter = require("./routes/orderRouter");
+const adminRouter = require("./routes/adminRouter");
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -26,19 +29,21 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
+// 만드는중
+app.use('/orders', orderRouter);
+app.use('/admin', adminRouter);
+
 // 이미지 불러오기 (테스트)
 app.use(express.static('public'));
 app.use('/img', (req, res)=>{
   const url = `http://localhost:${port}/images/bmo1.gif`;
   res.send(url);
 })
-
-// 만드는중
-app.use('/orders', orderRouter);
+// 테스트용 미들웨어
 app.post('/login', (req, res, next)=>{
     const {email, password} = req.body;
     console.log(email, password);
-    res.status(200).send({email, password});
+    res.status(200).send({msg: "okok", email, password});
 })
 
 // catch 404 and forward to error handler
@@ -56,11 +61,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-
-// app.listen(port, (req, res)=>{
-//   console.log(`Server running on port : ${port}`);
-// })
 
 mongoose
   .connect(uri)

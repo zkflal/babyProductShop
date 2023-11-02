@@ -3,13 +3,27 @@ const orderModel = require("../models/orderModel");
 // 특정 유저의 모든 주문을 불러오기
 const findAllOrder = async (req, res)=>{
     // 유저이름 받아오기
-    const {userName} = req.params;
-
+    const {email} = req.params;
+    console.log(UserName);
     try{
-        const allOrder = await orderModel.find({
-            UserName: userName,
+        const orderDatas = await orderModel.find({
+            Email: email
         })
-        res.status(200).json(allOrder);
+        console.log(orderDatas);
+        res.status(200).json(orderDatas);
+    }catch(err){
+        res.status(500).json(err);
+    }
+}
+
+// 주문 정보 불러오기
+const findOneOrder = async (req, res)=>{
+    const {orderId} = req.params;
+    try{
+        const orderData = await orderModel.findOne({
+            shortId : orderId
+        })
+        res.status(200).json(orderData);
     }catch(err){
         res.status(500).json(err);
     }
@@ -18,28 +32,29 @@ const findAllOrder = async (req, res)=>{
 // 주문 추가
 const createOrder = async (req, res)=>{
     // 유저 주문 정보 받아오기
-    const {userName, address, phone, email, products} = req.body;
+    const {Name, Address, Phone, Email, ProductInfos} = req.body;
+
+    let TotalPrice = 0;
+    for(let product of ProductInfos.list){
+        TotalPrice += product.Price;
+    }
+    const Status = "주문완료";
+    const Cancel = false;
 
     try{
-        // 상품 모델에서 products에 맞는 상품의 가격을 찾아와 입력
-        let totalPrice = 0;
-        for(let productId in products){
-            const product = await orderModel.find({productId});
-            totalPrice += product.Price;
-        }
-
         await orderModel.create({
             // req로 받아오는 부분
-            UserName: userName,
-            Address: address,
-            PhoneNumber: phone,
-            Email: email,
-            Products: products,
+            Name,
+            Address,
+            Phone,
+            Email,
+            ProductInfos,
             // 생성하는 부분
-            TotalPrice: totalPrice,
-            OrderStatus: 0,
-            // OrderId 자동생성 아마도...
-        })
+            TotalPrice,
+            Status,
+            Cancel
+        });
+        res.status(201).end();
     }catch(err){
         res.status(500).json(err);
     }
@@ -47,45 +62,63 @@ const createOrder = async (req, res)=>{
 }
 
 // 주문 정보 수정
-const updateOrderInfo = async (req, res)=>{
-    // 주문 아이디 받아오기
-    const {orderId} = req.params;
-    // 수정할 정보 받아오기 (변경 없는 값도 그냥 그대로 받아오기)
-    const {userName, address, phone, email} = req.body;
-
+const updateOrder = async (req, res)=>{
+    const {orderId, Name, Address, Phone} = req.body;
     try{
         await orderModel.updateOne({
             shortId: orderId
         },{
-            UserName: userName,
-            Address: address,
-            PhoneNumber: phone,
-            Email: email,
+            Name,
+            Address,
+            Phone
         })
-        res.status(200).send();
+        res.status(200).end();
     }catch(err){
-        res.status(500).json(err);
+        res.status(400).json(err);
     }
 }
 
-// 주문 상태 수정
-const updateOrderStatus = async (req, res)=>{
-    // 주문 아이디 받아오기
+// 주문 취소
+const cancelOrder = async (req, res)=>{
     const {orderId} = req.params;
-    // 수정할 정보 받아오기
-    const {status} = req.query;
-
     try{
         await orderModel.updateOne({
             shortId: orderId
         },{
-            OrderStatus: status
-        })
-        res.status(200).send();
+            Cancel: true
+        });
+        res.status(200).end();
     }catch(err){
-        res.status(500).json(err);
+        res.status(400).json(err);
     }
 }
 
+// 관리자 주문 상태 수정
+const adminUpdateOrder = async (req, res)=>{
+    const {orderId, Status} = req.body;
+    try{
+        await orderModel.updateOne({
+            shortId: orderId
+        },{
+            Status: Status
+        })
+        res.status(200).send();
+    }catch(err){
+        res.status(400).json(err);
+    }
+}
 
-module.exports = {findAllOrder, createOrder, updateOrderInfo, updateOrderStatus};
+// 관리자 주문 삭제
+const adminDeleteOrder = async (req, res)=>{
+    const {orderId} = req.params;
+    try{
+        await orderModel.deleteOne({
+            shortId: orderId
+        });
+        res.status(200).send();
+    }catch(err){
+        res.status(400).json(err);
+    }
+}
+
+module.exports = {findAllOrder, findOneOrder, createOrder, updateOrder, cancelOrder, adminUpdateOrder, adminDeleteOrder};

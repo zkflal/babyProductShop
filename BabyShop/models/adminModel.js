@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const adminSchema = new mongoose.Schema({
     AdminId: {type: String, requried: true},
-    AdminPWD: {type: String, requried: true}
+    HashPwd: {type: String, requried: true}
 },{
     timestamps: true,
 });
