@@ -2,6 +2,6 @@
  const {joinUser} = require("../controllers/userController");
 const router = Router();
 
-router.post("/users",joinUser);
+router.post("/join",joinUser);
 
 module.exports = router;
