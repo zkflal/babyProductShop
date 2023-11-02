@@ -14,14 +14,28 @@ const joinUser = async (req,res) => {
             HashPwd:hashedPwd ,
             Email,
         });
+        res.status(200).end();
+    }
 
+    catch(err){
+        console.log(err);
+        res.status(400).end();
+
+    }
+}
+
+const deleteUser = async(req,res) =>{
+    const {userid} = req.params;
+    try{
+        await User.deleteOne({shortId: userid});
         res.status(200).end();
     }
     catch(err){
         console.log(err);
         res.status(400).end();
     }
+
 }
 
 
-module.exports = {joinUser};
+module.exports = {joinUser, deleteUser};
