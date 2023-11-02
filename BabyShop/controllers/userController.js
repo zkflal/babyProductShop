@@ -24,6 +24,7 @@ const joinUser = async (req,res) => {
     }
 }
 
+//회원 탈퇴
 const deleteUser = async(req,res) =>{
     const {userid} = req.params;
     try{
@@ -34,8 +35,22 @@ const deleteUser = async(req,res) =>{
         console.log(err);
         res.status(400).end();
     }
+}
+
+//회원 정보 보여주기
+const detailUser = async(req,res) => {
+    const {userid} = req.params;
+    try{
+        const userdetail = await User.find({shortId: userid});
+        console.log(userdetail);
+        res.status(200).json(userdetail);
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).end();
+    }
 
 }
 
 
-module.exports = {joinUser, deleteUser};
+module.exports = {joinUser, deleteUser,detailUser};

@@ -5,4 +5,4 @@ module.exports = (password) => {
                         .update(password)
                         .digest('hex');
         return hash;
-}
+} 
