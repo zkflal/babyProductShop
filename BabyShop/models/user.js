@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
     },
     Email : {
         type:String,
+        required:true,
     },
     HashPwd : {
         type:String,
@@ -21,7 +22,6 @@ const userSchema = new mongoose.Schema({
     },
     Phone : {
         type:String,
-        required:true,
     },
 })
 
