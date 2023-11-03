@@ -17,11 +17,9 @@ const orderRouter = require("./src/orders/routes/orderRouter");
 const orderAdminRouter = require("./src/orders/routes/orderAdminRouter");
 
 const {checkAdmin} = require("./utils/adminMiddleware");
+const userRouter = require("./src/users/routes/userRouter");
 
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
 
 
@@ -33,6 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 // 만드는중
+app.use('/users',userRouter);
 app.use('/orders', checkAdmin, (req, res, next)=>{
     if(req.admin){
       orderAdminRouter(req, res, next);
