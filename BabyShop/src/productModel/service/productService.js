@@ -26,7 +26,7 @@ const adminCreateProduct = async (req, res, next) => {
     req.body;
   try {
     await productModel.create({
-      ProductId: (await productModel.countDocuments()) + 1,
+      ProductId: await productModel.countDocuments(),
       Price,
       ProductName,
       ProductImg,
@@ -74,12 +74,12 @@ const adminUpdateProduct = async (req, res) => {
 
 // 관리자 상품 삭제
 const adminDeleteProduct = async (req, res) => {
-  const { productId } = req.params;
+  const { id } = req.params;
   try {
     await productModel.deleteOne({
-      ProductId: productId,
+      ProductId: id,
     });
-    res.status(200).send("상품이 수정되었습니다.");
+    res.status(200).send("상품이 삭제되었습니다.");
   } catch (err) {
     res.status(400).end();
   }

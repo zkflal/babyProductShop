@@ -22,7 +22,7 @@ const adminCreateCategory = async (req, res) => {
       ChildCategory,
     });
     console.log("성공");
-    res.status(200).end();
+    res.status(200).send("카테고리가 생성되었습니다.");
   } catch (err) {
     res.status(500).send(err);
   }
@@ -30,19 +30,18 @@ const adminCreateCategory = async (req, res) => {
 
 // 관리자 카테고리 수정
 const adminUpdateCategory = async (req, res) => {
-  const { CategoryId, ProductIdList, ParentCategory, ChildCategory } = req.body;
+  const { Category, ProductList, ChildCategory } = req.body;
   try {
     await categoryModel.updateOne(
       {
-        CategoryId,
+        Category,
       },
       {
-        ProductIdList,
-        ParentCategory,
+        ProductList,
         ChildCategory,
       }
     );
-    res.status(200).end();
+    res.status(200).send("카테고리가 수정되었습니다.");
   } catch (err) {
     res.status(400).end();
   }
@@ -50,25 +49,15 @@ const adminUpdateCategory = async (req, res) => {
 
 // 관리자 카테고리 삭제
 const adminDeleteCategory = async (req, res) => {
-  const { categoryId } = req.body;
+  const { category } = req.body;
   try {
-    await categoryModel.updateOne(
-      {
-        CategoryId: categoryId,
-      },
-      {
-        ProductIdList,
-        ParentCategory,
-        ChildCategory,
-      }
-    );
+    await categoryModel.deleteOne({
+      Category: category,
+    });
 
-    res.status(200).end();
+    res.status(200).send("카테고리가 삭제되었습니다.");
   } catch (err) {
     res.status(400).end();
-
-    err.status = 400;
-    next(err);
   }
 };
 

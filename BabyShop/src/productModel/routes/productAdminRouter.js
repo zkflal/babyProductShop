@@ -11,6 +11,6 @@ const router = Router();
 
 router.post("/", adminCreateProduct);
 router.put("/", adminUpdateProduct);
-router.delete("/", adminDeleteProduct);
+router.delete("/:id", adminDeleteProduct);
 
 module.exports = router;
