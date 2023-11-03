@@ -5,6 +5,7 @@ const shortId = {
   default: () => {
     return nanoid()
   },
+  require: true,
   index: true,
 }
 
