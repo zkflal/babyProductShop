@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
-const shortId = require('./shortId');
 
 
 const userSchema = new mongoose.Schema({
-    shortId, // null값 허용
+    UserId:{
+        type:String,
+    }, // null값 허용
     UserName:{
         type:String,
         required:true,
