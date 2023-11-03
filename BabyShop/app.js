@@ -12,8 +12,11 @@ const port = process.env.PORT;
 const uri = process.env.ATLAS_URI;
 
 const app = express();
-const orderRouter = require("./routes/orderRouter");
-const adminRouter = require("./routes/adminRouter");
+const adminRouter = require("./src/admin/routes/adminRouter");
+const orderRouter = require("./src/orders/routes/orderRouter");
+const orderAdminRouter = require("./src/orders/routes/orderAdminRouter");
+
+const {checkAdmin} = require("./utils/adminMiddleware");
 
 
 // view engine setup
@@ -30,7 +33,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 // 만드는중
-app.use('/orders', orderRouter);
+app.use('/orders', checkAdmin, (req, res, next)=>{
+    if(req.admin){
+      orderAdminRouter(req, res, next);
+    }else{
+      orderRouter(req, res, next);
+    }
+});
 app.use('/admin', adminRouter);
 
 // 이미지 불러오기 (테스트)
@@ -53,13 +62,8 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send(err.message);
 });
 
 mongoose

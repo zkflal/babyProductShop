@@ -1,5 +1,13 @@
 const mongoose = require("mongoose");
-const shortId = require("./shortId");
+const shortId = require("../../../utils/shortId");
+
+const ProductInfosType = new mongoose.Schema({
+    Price: {type:Number, required:true},
+    ProductName: {type:String, required:true},
+    ProductImg: {type:String, required:true},
+    Detail: {type:String, required:true},
+    Condition: {type:String, required:true},
+})
 
 const orderSchema = new mongoose.Schema({
     shortId,    // OrderId
@@ -8,7 +16,7 @@ const orderSchema = new mongoose.Schema({
     Phone: {type: String, required: true},
     Email: {type: String, required: true},
 
-    ProductInfos: {type: Object, require: true},
+    ProductInfos: [ProductInfosType],
     
     TotalPrice: {type: Number, required: true},
     Status: {type: String, required: true},
