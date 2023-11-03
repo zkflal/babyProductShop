@@ -4,33 +4,52 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const mongoose = require("mongoose");
+const cors = require("cors");
+const productRouter = require("./src/productModel/routes/productRouter");
+const productAdminRouter = require("./src/productModel/routes/productAdminRouter");
+const categoryRouter = require("./src/categoryModel/routes/categoryRouter");
+const categoryAdminRouter = require("./src/categoryModel/routes/categoryAdminRouter");
+const checkAdmin = require("./utils/checkAdmin");
 const dotenv = require("dotenv");
 dotenv.config({ path: ".env.local" });
 var app = express();
 
-const url = `mongodb+srv://${process.env.MONGODB_ID}:${process.env.MONGODB_PW}@cluster0.mrom3kk.mongodb.net/?retryWrites=true&w=majority`;
 mongoose
-  .connect(url)
+  .connect(process.env.ATLAS_URI)
   .then((client) => {
     console.log("mongo connected");
     console.log("test client: ", client);
   })
-  .then(
-    app.listen(3000, () => {
-      console.log("3000 port on");
-    })
-  )
   .catch((err) => console.log(err));
-
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
 
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors());
+
+//send file
 app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/", (req, res) => {
+  res.send("hello");
+});
+
+// app.use("/admin", adminRouter);
+app.use("/products", checkAdmin, (req, res, next) => {
+  if (req.admin) {
+    productAdminRouter(req, res, next);
+  } else {
+    productRouter(req, res, next);
+  }
+});
+app.use("/categories", checkAdmin, (req, res, next) => {
+  if (req.admin) {
+    categoryAdminRouter(req, res, next);
+  } else {
+    categoryRouter(req, res, next);
+  }
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -39,13 +58,8 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.send(err.message);
 });
 
 module.exports = app;
