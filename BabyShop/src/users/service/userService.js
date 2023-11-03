@@ -2,7 +2,7 @@ const {User} = require("../models/user");
 const hashPassword = require("../../../utils/hashedPwd");
 
 //회원가입
-const joinUser = async (req,res) => {
+const joinUser = async (req,res,next) => {
     const { UserId, UserName, Address, HashPwd,  Email } = req.body;
     const hashedPwd = hashPassword(HashPwd);
     console.log(UserId);
@@ -24,12 +24,12 @@ const joinUser = async (req,res) => {
 }
     catch(err){
         console.log(err);
-        res.status(400).end();
+        next();    
     }
 }
 
 //회원 탈퇴
-const deleteUser = async(req,res) =>{
+const deleteUser = async(req,res,next) =>{
     const {userid} = req.params;
     try{
         await User.deleteOne({UserId: userid});
@@ -37,12 +37,12 @@ const deleteUser = async(req,res) =>{
     }
     catch(err){
         console.log(err);
-        res.status(400).end();
+        next();
     }
 }
 
 //회원 정보 보여주기
-const detailUser = async(req,res) => {
+const detailUser = async(req,res,next) => {
     const {userid} = req.params;
     try{
         const userdetail = await User.find({ UserId : userid});
@@ -51,13 +51,13 @@ const detailUser = async(req,res) => {
     }
     catch(err){
         console.log(err);
-        res.status(500).end("정보 없음");
+       next("정보없음");
     }
 
 }
 
 //회원 정보 수정
-const chageUser = async(req,res) => {
+const chageUser = async(req,res,next) => {
     const {UserId , UserName, Address,Email,HashPwd,Phone } = req.body;
     const hashedPwd = hashPassword(HashPwd);
     try{ 
@@ -77,12 +77,12 @@ const chageUser = async(req,res) => {
     }
 catch(err){
          console.log(err);
-        res.status(500).end("수정 실패");
+        next("수정 실패")
     }  
 }
 
 //비밀번호 변경
-const changePwd = async(req,res) => {
+const changePwd = async(req,res,next) => {
 
 }
 
