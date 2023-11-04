@@ -1,13 +1,13 @@
 const { Schema } = require("mongoose");
 const mongoose = require("mongoose");
 const productSchema = new Schema({
-  Seq: { type: Number, required: true },
-  Price: { type: Number, required: true },
-  ProductName: { type: String, required: true },
-  ProductImg: { type: [String], required: true },
-  Detail: { type: String, required: true },
-  Condition: { type: String, required: true },
-  Amount: { type: Number, required: true },
+  seq: { type: Number, required: true },
+  price: { type: Number, required: true },
+  product_name: { type: String, required: true },
+  product_img: { type: [String], required: true },
+  detail: { type: String, required: true },
+  condition: { type: String, required: true },
+  amount: { type: Number, required: true },
 });
 
 const productModel = mongoose.model("Product", productSchema);
