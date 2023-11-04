@@ -5,19 +5,21 @@ const findAllProduct = async (req, res, next) => {
     const product = await productModel.find({});
     res.status(200).json(product);
   } catch (err) {
-    res.status(500).send(err);
+    err.status = 500;
+    next(err)
   }
 };
 
 const findProductById = async (req, res, next) => {
-  const { id } = req.params;
+  const { seq } = req.params;
   try {
     const product = await productModel.findOne({
-      id
+      seq
     });
     res.status(200).json(product);
   } catch (err) {
-    res.status(500).send(err);
+    err.status = 500;
+    next(err)
   }
 };
 
@@ -26,7 +28,7 @@ const adminCreateProduct = async (req, res, next) => {
     req.body;
   try {
     await productModel.create({
-      id: await productModel.countDocuments(),
+      seq: await productModel.countDocuments(),
       price,
       product_name,
       product_img,
@@ -37,14 +39,15 @@ const adminCreateProduct = async (req, res, next) => {
     console.log("등록 완료");
     res.send("등록이 완료되었습니다.");
   } catch (err) {
-    res.status(500).send(err);
+    err.status = 500;
+    next(err)
   }
 };
 
 // 관리자 상품 수정
 const adminUpdateProduct = async (req, res) => {
   const {
-    id,
+    seq,
     price,
     product_name,
     product_img,
@@ -55,7 +58,7 @@ const adminUpdateProduct = async (req, res) => {
   try {
     await productModel.updateOne(
       {
-        id,
+        seq,
       },
       {
         price,
@@ -68,20 +71,22 @@ const adminUpdateProduct = async (req, res) => {
     );
     res.status(201).send("상품이 수정되었습니다.");
   } catch (err) {
-    res.status(400).send(err);
+    err.status = 500;
+    next(err)
   }
 };
 
 // 관리자 상품 삭제
 const adminDeleteProduct = async (req, res) => {
-  const { id } = req.params;
+  const { seq } = req.params;
   try {
     await productModel.deleteOne({
-      id
+      seq
     });
     res.status(200).send("상품이 삭제되었습니다.");
   } catch (err) {
-    res.status(400).send(err);
+    err.status = 500;
+    next(err)
   }
 };
 
