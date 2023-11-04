@@ -10,10 +10,10 @@ const findAllProduct = async (req, res, next) => {
 };
 
 const findProductById = async (req, res, next) => {
-  const { productId } = req.params;
+  const { id } = req.params;
   try {
     const product = await productModel.findOne({
-      ProductId: productId,
+      id
     });
     res.status(200).json(product);
   } catch (err) {
@@ -22,17 +22,17 @@ const findProductById = async (req, res, next) => {
 };
 
 const adminCreateProduct = async (req, res, next) => {
-  const { Price, ProductName, ProductImg, Detail, Condition, Amount } =
+  const { price, product_name, product_img, detail, condition, amount } =
     req.body;
   try {
     await productModel.create({
-      ProductId: await productModel.countDocuments(),
-      Price,
-      ProductName,
-      ProductImg,
-      Detail,
-      Condition,
-      Amount,
+      id: await productModel.countDocuments(),
+      price,
+      product_name,
+      product_img,
+      detail,
+      condition,
+      amount,
     });
     console.log("등록 완료");
     res.send("등록이 완료되었습니다.");
@@ -44,26 +44,26 @@ const adminCreateProduct = async (req, res, next) => {
 // 관리자 상품 수정
 const adminUpdateProduct = async (req, res) => {
   const {
-    ProductId,
-    Price,
-    PorductName,
-    ProductImg,
-    Detail,
-    Condition,
-    Amount,
+    id,
+    price,
+    product_name,
+    product_img,
+    detail,
+    condition,
+    amount,
   } = req.body;
   try {
     await productModel.updateOne(
       {
-        ProductId,
+        id,
       },
       {
-        Price,
-        PorductName,
-        ProductImg,
-        Detail,
-        Condition,
-        Amount,
+        price,
+        product_name,
+        product_img,
+        detail,
+        condition,
+        amount,
       }
     );
     res.status(201).send("상품이 수정되었습니다.");
@@ -77,7 +77,7 @@ const adminDeleteProduct = async (req, res) => {
   const { id } = req.params;
   try {
     await productModel.deleteOne({
-      ProductId: id,
+      id
     });
     res.status(200).send("상품이 삭제되었습니다.");
   } catch (err) {
