@@ -43,13 +43,13 @@ const adminUpdateCategory = async (req, res) => {
     );
     res.status(200).send("카테고리가 수정되었습니다.");
   } catch (err) {
-    res.status(400).end();
+    res.status(400).send(err);
   }
 };
 
 // 관리자 카테고리 삭제
 const adminDeleteCategory = async (req, res) => {
-  const { category } = req.body;
+  const { category } = req.params;
   try {
     await categoryModel.deleteOne({
       Category: category,
@@ -57,7 +57,7 @@ const adminDeleteCategory = async (req, res) => {
 
     res.status(200).send("카테고리가 삭제되었습니다.");
   } catch (err) {
-    res.status(400).end();
+    res.status(400).send(err);
   }
 };
 

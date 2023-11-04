@@ -5,7 +5,7 @@ const findAllProduct = async (req, res, next) => {
     const product = await productModel.find({});
     res.status(200).json(product);
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).send(err);
   }
 };
 
@@ -17,7 +17,7 @@ const findProductById = async (req, res, next) => {
     });
     res.status(200).json(product);
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).send(err);
   }
 };
 
@@ -37,7 +37,7 @@ const adminCreateProduct = async (req, res, next) => {
     console.log("등록 완료");
     res.send("등록이 완료되었습니다.");
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).send(err);
   }
 };
 
@@ -68,7 +68,7 @@ const adminUpdateProduct = async (req, res) => {
     );
     res.status(201).send("상품이 수정되었습니다.");
   } catch (err) {
-    res.status(400).end();
+    res.status(400).send(err);
   }
 };
 
@@ -81,7 +81,7 @@ const adminDeleteProduct = async (req, res) => {
     });
     res.status(200).send("상품이 삭제되었습니다.");
   } catch (err) {
-    res.status(400).end();
+    res.status(400).send(err);
   }
 };
 
