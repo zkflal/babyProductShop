@@ -1,5 +1,31 @@
 const {User} = require("../models/user");
 const hashPassword = require("../../../utils/hashedPwd");
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = process.env.SECRET_KEY;
+
+//로그인
+const loginUser  = async(req,res,next) => {
+    const {UserId , HashPwd} = req.body;
+    const hashedPwd = hashPassword(HashPwd);
+    try
+    {
+        const user = await User.findOne({UserId,HashPwd:hashedPwd});
+        if (!user) {    
+            const err = new Error("회원정보를 찾을 수  없습니다.");
+             err.status = 401;
+             throw err;
+            };
+        token = jwt.sign({
+            type:'JWT',
+            UserId:UserId},
+            SECRET_KEY
+            );
+        res.status(200).json({token:token}).end("로그인 성공");
+    }
+    catch(err){
+        next(err);
+    }
+}
 
 //회원가입
 const joinUser = async (req,res,next) => {
@@ -24,7 +50,7 @@ const joinUser = async (req,res,next) => {
 }
     catch(err){
         console.log(err);
-        next();    
+        next(err);    
     }
 }
 
@@ -32,12 +58,13 @@ const joinUser = async (req,res,next) => {
 const deleteUser = async(req,res,next) =>{
     const {userid} = req.params;
     try{
-        await User.deleteOne({UserId: userid});
+        await User.findOneAndDelete({UserId: userid});
         res.status(200).end("삭제 성공");
     }
     catch(err){
         console.log(err);
-        next();
+        err.status = 400;
+        next(err);
     }
 }
 
@@ -45,13 +72,17 @@ const deleteUser = async(req,res,next) =>{
 const detailUser = async(req,res,next) => {
     const {userid} = req.params;
     try{
-        const userdetail = await User.find({ UserId : userid});
+        const userdetail = await User.findOne({ UserId : userid });
         console.log(userdetail);
-        res.status(200).json(userdetail).end();
+        if (!userdetail){
+            const err = new Error("회원정보를 찾을 수  없습니다.");
+            err.status = 401;
+            throw err;
+        }
+            res.status(200).json(userdetail).end();
     }
     catch(err){
-        console.log(err);
-       next("정보없음");
+       next(err);
     }
 
 }
@@ -77,14 +108,16 @@ const chageUser = async(req,res,next) => {
     }
 catch(err){
          console.log(err);
-        next("수정 실패")
+         err.status = 400;
+        next(err);
     }  
 }
 
 //비밀번호 변경
-const changePwd = async(req,res,next) => {
+// const changePwd = async(req,res,next) => {
+//     const { HashPwd } = req.body;
 
-}
+// }
 
 
-module.exports = {joinUser, deleteUser,detailUser, chageUser};
+module.exports = {loginUser,joinUser, deleteUser,detailUser, chageUser};
