@@ -13,6 +13,7 @@ const findProductByCategory = async (req, res) => {
   console.log(product);
   res.json(product);
 };
+
 const adminCreateCategory = async (req, res) => {
   const { Category, ProductList, ChildCategory } = req.body;
   try {
