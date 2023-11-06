@@ -4,6 +4,7 @@ const productModel = require("../../products/models/productModel");
 const findProductByCategory = async (req, res, next) => {
   try {
     const categoryName = req.params.id;
+    console.log(categoryName);
 
     const category = await categoryModel.findOne({ name: categoryName });
 

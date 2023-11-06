@@ -1,4 +1,5 @@
 const productModel = require("../models/productModel");
+const categoryModel = require("../../categories/models/categoryModel");
 
 const findAllProduct = async (req, res, next) => {
   try {
@@ -24,17 +25,19 @@ const findProductById = async (req, res, next) => {
 };
 
 const adminCreateProduct = async (req, res, next) => {
-  const { price, product_name, product_img, detail, condition, amount } =
+  const { price, name, img, detail, condition, amount, categoryName } =
     req.body;
+  const category = await categoryModel.findOne({ name: categoryName });
   try {
     await productModel.create({
       seq: await productModel.countDocuments(),
       price,
-      product_name,
-      product_img,
+      name,
+      img,
       detail,
       condition,
       amount,
+      category: category._id,
     });
     console.log("등록 완료");
     res.send("등록이 완료되었습니다.");
@@ -46,8 +49,9 @@ const adminCreateProduct = async (req, res, next) => {
 
 // 관리자 상품 수정
 const adminUpdateProduct = async (req, res) => {
-  const { seq, price, product_name, product_img, detail, condition, amount } =
+  const { seq, price, name, img, detail, condition, amount, categoryName } =
     req.body;
+  const category = await categoryModel.findOne({ name: categoryName });
   try {
     await productModel.updateOne(
       {
@@ -55,11 +59,12 @@ const adminUpdateProduct = async (req, res) => {
       },
       {
         price,
-        product_name,
-        product_img,
+        name,
+        img,
         detail,
         condition,
         amount,
+        category: category._id,
       }
     );
     res.status(201).send("상품이 수정되었습니다.");

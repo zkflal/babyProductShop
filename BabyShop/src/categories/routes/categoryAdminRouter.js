@@ -9,6 +9,6 @@ const router = Router();
 
 router.post("/", adminCreateCategory);
 router.put("/", adminUpdateCategory);
-router.delete("/", adminDeleteCategory);
+router.delete("/:name", adminDeleteCategory);
 
 module.exports = router;
