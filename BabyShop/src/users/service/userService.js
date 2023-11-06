@@ -89,7 +89,7 @@ const detailUserAuth = async(req,res,next) =>{
         if(TokenUserId === UserId)
         {
             const user = await User.findOne({UserId,HashPwd:hashedPwd});
-            if (user) {    
+            if (!user) {    
                 const err = new Error("회원정보를 찾을 수  없습니다.");
                 err.status = 401;
                 throw err;
