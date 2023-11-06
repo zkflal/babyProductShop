@@ -3,10 +3,10 @@ const orderModel = require("../../orders/models/orderModel");
 // 특정 유저의 모든 주문을 불러오기
 const findAllOrder = async (req, res, next)=>{
     // 토큰에서 유저 정보 가져오기 (토큰 만들기 전 임시)
-    const {UserId} = req.query;
+    const UserId = req.decoded.UserId;
     try{
         const orderDatas = await orderModel.find({
-            UserId
+            UserId : UserId
         })
         res.status(200).json(orderDatas);
     }catch(err){

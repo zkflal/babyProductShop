@@ -8,10 +8,11 @@ const checkToken = (req,res,next) => {
         req.decoded = jwt.verify(req.headers.authorization, SECRET_KEY);
         return next();
     }
-    catch{
+    catch(err){
         if(err.name === 'JsonWebTokenError'){
             return res.status(401).end("유효하지 않은 토큰입니다.")
         }
+        next(err);    
     }
 }
 
