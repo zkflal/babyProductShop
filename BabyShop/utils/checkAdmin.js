@@ -7,7 +7,7 @@ const checkAdmin = (req, res, next) => {
     console.log("어드민 확인되었습니다.");
     next();
   } else {
-    req.admin = true;
+    req.admin = false;
     console.log("유저 확인되었습니다.");
     next();
   }

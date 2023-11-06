@@ -1,4 +1,4 @@
-const productModel = require("../productModel");
+const productModel = require("../models/productModel");
 
 const findAllProduct = async (req, res, next) => {
   try {
@@ -6,7 +6,7 @@ const findAllProduct = async (req, res, next) => {
     res.status(200).json(product);
   } catch (err) {
     err.status = 500;
-    next(err)
+    next(err);
   }
 };
 
@@ -14,12 +14,12 @@ const findProductById = async (req, res, next) => {
   const { seq } = req.params;
   try {
     const product = await productModel.findOne({
-      seq
+      seq,
     });
     res.status(200).json(product);
   } catch (err) {
     err.status = 500;
-    next(err)
+    next(err);
   }
 };
 
@@ -40,21 +40,14 @@ const adminCreateProduct = async (req, res, next) => {
     res.send("등록이 완료되었습니다.");
   } catch (err) {
     err.status = 500;
-    next(err)
+    next(err);
   }
 };
 
 // 관리자 상품 수정
 const adminUpdateProduct = async (req, res) => {
-  const {
-    seq,
-    price,
-    product_name,
-    product_img,
-    detail,
-    condition,
-    amount,
-  } = req.body;
+  const { seq, price, product_name, product_img, detail, condition, amount } =
+    req.body;
   try {
     await productModel.updateOne(
       {
@@ -72,21 +65,21 @@ const adminUpdateProduct = async (req, res) => {
     res.status(201).send("상품이 수정되었습니다.");
   } catch (err) {
     err.status = 500;
-    next(err)
+    next(err);
   }
 };
 
 // 관리자 상품 삭제
 const adminDeleteProduct = async (req, res) => {
-  const { seq } = req.params;
+  const { id } = req.params;
   try {
     await productModel.deleteOne({
-      seq
+      seq: id,
     });
     res.status(200).send("상품이 삭제되었습니다.");
   } catch (err) {
     err.status = 500;
-    next(err)
+    next(err);
   }
 };
 
