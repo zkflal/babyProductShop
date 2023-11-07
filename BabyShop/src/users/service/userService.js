@@ -190,5 +190,20 @@ const changePasswordAuth = async(req,res,next) =>{
     }
 }
 
+//아이디 찾기
+const findId = async(req,res,next) => {
+    const {Email,  UserName} = req.body;
+    try{
+        const user = await User.findOne({UserName , Email});
+        console.log(user);
+        if(!user){
+            throw {status: 404, message:"회원정보를 찾을 수 없습니다."};
+        }
+        res.status(200).json(user.UserId);
+    }
+    catch(err){
+        next(err);
+    }
+}
 
-module.exports = {loginUser,joinUser, deleteUser,detailUserAuth,detailUser, chageUser ,changePwd,changePasswordAuth};
+module.exports = {loginUser,joinUser, deleteUser,detailUserAuth,detailUser, chageUser ,changePwd,changePasswordAuth,findId};

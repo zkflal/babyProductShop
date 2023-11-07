@@ -1,5 +1,5 @@
  const { Router } = require('express');
- const {loginUser,joinUser, deleteUser, detailUserAuth,detailUser ,chageUser, changePwd, changePasswordAuth} = require("../service/userService");
+ const {loginUser,joinUser, deleteUser, detailUserAuth,detailUser ,chageUser, changePwd, changePasswordAuth,findId} = require("../service/userService");
  const checkToken = require("../../../utils/checkToken");
 
 const router = Router();
@@ -12,6 +12,6 @@ router.get("/:userid",checkToken,detailUser); //사용자 정보 조회
 router.put("/",checkToken,chageUser); //사용자 정보 변경
 router.put("/password",checkToken,changePwd); //사용자 비밀번호 번호 찾기 -> 새로운 비밀번호로 변경
 router.post("/password",changePasswordAuth); // 사용자 비밀번호 찾기 전 본인인증
-
+router.post("/id",findId); //아이디 찾기
 
 module.exports = router;
