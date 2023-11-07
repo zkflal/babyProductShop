@@ -12,10 +12,15 @@ const loginUser  = async(req,res,next) => {
         const user = await User.findOne({UserId});
         if (!user) {    
             const err = new Error("회원정보를 찾을 수  없습니다.");
-             err.status = 401;
+             err.status = 404;
              throw err;
             };
-
+            
+        if (hashedPwd !== user.HashPwd){
+            const err = new Error("비밀번호가 일치하지 않습니다.");
+            err.status = 404;
+            throw err;
+        }
         token = jwt.sign({
             type:'JWT',
             UserId:UserId,
@@ -37,19 +42,17 @@ const joinUser = async (req,res,next) => {
     console.log(UserId);
     try{
         const existingUser = await User.findOne({UserId : UserId});
-        if (!existingUser){
-            await User.create({
-                UserId,
-                UserName,
-                Address,
-                HashPwd: hashedPwd,
-                Email,
-            });
-            res.status(200).end("회원가입성공");
-         } 
-        else {
-        res.status(400).end("사용자가 존재합니다."); 
-    }
+        if (existingUser){
+             return res.status(404).end("사용자가 존재합니다.");
+            } 
+         await User.create({
+            UserId,
+            UserName,
+            Address,
+            HashPwd: hashedPwd,
+            Email,
+        });
+        res.status(200).end("회원가입성공");
 }
     catch(err){
         console.log(err);
@@ -97,7 +100,7 @@ const detailUserAuth = async(req,res,next) =>{
         const user = await User.findOne({UserId,HashPwd:hashedPwd});
         if (!user) {    
             const err = new Error("회원정보를 찾을 수  없습니다.");
-            err.status = 401;
+            err.status = 404;
             throw err;
             };
         res.status(200).end("본인인증 성공");
@@ -117,7 +120,7 @@ const detailUser = async(req,res,next) => {
         console.log(userdetail);
         if (!userdetail){
             const err = new Error("회원정보를 찾을 수  없습니다.");
-            err.status = 401;
+            err.status = 404;
             throw err;
         }
             res.status(200).json(userdetail);
