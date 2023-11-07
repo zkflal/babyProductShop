@@ -6,23 +6,22 @@ const SECRET_KEY = process.env.SECRET_KEY;
 //로그인
 const loginUser  = async(req,res,next) => {
     const {UserId , HashPwd} = req.body;
-    const hashedPwd = hashPassword(HashPwd);
-    try
-    {
-        const user = await User.findOne({UserId,HashPwd:hashedPwd});
+    try{
+        const user = await User.findOne({
+            UserId,HashPwd:hashPassword(HashPwd)
+        });
         if (!user) {    
-            const err = new Error("회원정보를 찾을 수  없습니다.");
-             err.status = 401;
-             throw err;
-            };
+            throw new Error({status:404, message:"회원정보를 찾을 수  없습니다."})
+        }
         token = jwt.sign({
             type:'JWT',
-            UserId:UserId},
+            UserId:UserId,
+            Admin: false
+        },
             SECRET_KEY
-            );
-        res.status(200).json({token:token}).end("로그인 성공");
-    }
-    catch(err){
+        );
+        res.status(200).json({token:token, message:"로그인 성공"});
+    }catch(err){
         next(err);
     }
 }
@@ -30,26 +29,20 @@ const loginUser  = async(req,res,next) => {
 //회원가입
 const joinUser = async (req,res,next) => {
     const { UserId, UserName, Address, HashPwd,  Email } = req.body;
-    const hashedPwd = hashPassword(HashPwd);
-    console.log(UserId);
     try{
-        const existingUser = await User.findOne({UserId : UserId});
-        if (!existingUser){
-            await User.create({
-                UserId,
-                UserName,
-                Address,
-                HashPwd: hashedPwd,
-                Email,
-            });
-            res.status(200).end("회원가입성공");
-         } 
-        else {
-        res.status(400).end("사용자가 존재합니다."); 
-    }
-}
-    catch(err){
-        console.log(err);
+        const isUser = await User.findOne({UserId : UserId});
+        if (!isUser){
+            throw new Error({status: 400, message:"사용자가 존재합니다."})
+        } 
+        await User.create({
+            UserId,
+            UserName,
+            Address,
+            HashPwd: hashPassword(HashPwd),
+            Email,
+        });
+        res.status(200).send("회원가입성공");
+    }catch(err){
         next(err);    
     }
 }
@@ -57,22 +50,17 @@ const joinUser = async (req,res,next) => {
 
 //회원 탈퇴
 const deleteUser = async(req,res,next) =>{
-    const UserId = req.decoded.UserId;
-    console.log(UserId)
+    const {UserId} = req.decoded;
 
     try{
-        const existingUser = await User.findOne({UserId : UserId});
-        if (existingUser){
-            await User.deleteOne({
-                UserId : UserId,
-            });
-            res.status(200).end("삭제 성공");
-         } 
-         else{
-         const err = new Error("회원정보를 찾을 수  없습니다.");
-             err.status = 400;
-             throw err;
-         }
+        const isUser = await User.findOne({UserId});
+        if(!isUser){
+            throw new Error({status: 404, message:"회원정보를 찾을 수  없습니다."});
+        } 
+        await User.deleteOne({
+            UserId : UserId,
+        });
+        res.status(200).send("삭제 성공");
     }
     catch(err){
         console.log(err);
@@ -119,7 +107,7 @@ const detailUser = async(req,res,next) => {
             err.status = 401;
             throw err;
         }
-            res.status(200).json(userdetail).end();
+            res.status(200).json(userdetail)
     }
     catch(err){
        next(err);

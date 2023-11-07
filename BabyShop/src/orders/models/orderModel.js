@@ -3,6 +3,7 @@ const shortId = require("../../../utils/shortId");
 
 const ProductInfosType = new mongoose.Schema({
     Price: {type:Number, required:true},
+    Amount: {type:Number, required:true},
     ProductName: {type:String, required:true},
     ProductImg: {type:String, required:true},
     Detail: {type:String, required:true},
