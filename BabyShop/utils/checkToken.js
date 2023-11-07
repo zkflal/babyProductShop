@@ -5,6 +5,10 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 const checkToken = (req,res,next) => {
     try{
+        if(!req.header.authorization)
+        {
+            return next({message:"비회원입니다."});
+        }
         req.decoded = jwt.verify(req.headers.authorization, SECRET_KEY);
         return next();
     }

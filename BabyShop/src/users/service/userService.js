@@ -9,18 +9,21 @@ const loginUser  = async(req,res,next) => {
     const hashedPwd = hashPassword(HashPwd);
     try
     {
-        const user = await User.findOne({UserId,HashPwd:hashedPwd});
+        const user = await User.findOne({UserId});
         if (!user) {    
             const err = new Error("회원정보를 찾을 수  없습니다.");
              err.status = 401;
              throw err;
             };
+
         token = jwt.sign({
             type:'JWT',
-            UserId:UserId},
+            UserId:UserId,
+            Admin:false},
             SECRET_KEY
             );
-        res.status(200).json({token:token}).end("로그인 성공");
+
+        res.status(200).json({token:token});
     }
     catch(err){
         next(err);
@@ -58,27 +61,25 @@ const joinUser = async (req,res,next) => {
 //회원 탈퇴
 const deleteUser = async(req,res,next) =>{
     const UserId = req.decoded.UserId;
-    console.log(UserId)
-
+    console.log(UserId);
     try{
         const existingUser = await User.findOne({UserId : UserId});
-        if (existingUser){
-            await User.deleteOne({
-                UserId : UserId,
-            });
-            res.status(200).end("삭제 성공");
+        if (!existingUser){
+            const err = new Error("회원정보를 찾을 수  없습니다.");
+            err.status = 404;
+            throw err;
          } 
-         else{
-         const err = new Error("회원정보를 찾을 수  없습니다.");
-             err.status = 400;
-             throw err;
-         }
+         await User.deleteOne({
+            UserId : UserId,
+        });
+        res.status(200).end("삭제 성공");
     }
     catch(err){
         console.log(err);
         next(err);    
     }
 }
+
 //회원정보 보여주기용 본인인증
 const detailUserAuth = async(req,res,next) =>{
     const TokenUserId = req.decoded.UserId;
@@ -86,27 +87,27 @@ const detailUserAuth = async(req,res,next) =>{
     const hashedPwd = hashPassword(HashPwd);
     try
     {
-        if(TokenUserId === UserId)
+        if(TokenUserId !== UserId)
         {
-            const user = await User.findOne({UserId,HashPwd:hashedPwd});
-            if (!user) {    
-                const err = new Error("회원정보를 찾을 수  없습니다.");
-                err.status = 401;
-                throw err;
-                };
-            res.status(200).end("본인인증 성공");
-        }
-        else {
             const err = new Error("유효하지 않은 토큰입니다.");
              err.status = 401;
              throw err;
         }
+        
+        const user = await User.findOne({UserId,HashPwd:hashedPwd});
+        if (!user) {    
+            const err = new Error("회원정보를 찾을 수  없습니다.");
+            err.status = 401;
+            throw err;
+            };
+        res.status(200).end("본인인증 성공");
+       
     }
     catch(err){
         next(err);
     }
-
 }
+
 
 //회원 정보 보여주기
 const detailUser = async(req,res,next) => {
@@ -119,13 +120,13 @@ const detailUser = async(req,res,next) => {
             err.status = 401;
             throw err;
         }
-            res.status(200).json(userdetail).end();
+            res.status(200).json(userdetail);
     }
     catch(err){
        next(err);
     }
-
 }
+
 
 //회원 정보 수정
 const chageUser = async(req,res,next) => {
@@ -133,7 +134,7 @@ const chageUser = async(req,res,next) => {
     const { UserName, Address,Email,HashPwd,Phone } = req.body;
     const hashedPwd = hashPassword(HashPwd);
     try{ 
-    console.log(UserId)
+    console.log(UserId);
     const user = await User.findOneAndUpdate(
         {UserId : UserId},
         {
@@ -180,6 +181,7 @@ const changePwd = async(req,res,next) => {
         }  
 }
 
+
 //비밀번호 찾기용 본인인증 (이메일과 아이디로 진행)
 const changePasswordAuth = async(req,res,next) =>{
     const {UserId , Email} = req.body;
@@ -189,7 +191,7 @@ const changePasswordAuth = async(req,res,next) =>{
         console.log(user)
         if (!user) {    
             const err = new Error("회원정보를 찾을 수  없습니다.");
-             err.status = 401;
+             err.status = 404;
              throw err;
             };
         res.status(200).end("본인인증 성공");
