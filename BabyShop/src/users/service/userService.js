@@ -21,7 +21,8 @@ const loginUser  = async(req,res,next) => {
             type:'JWT',
             UserId:UserId,
             Admin:false},
-            SECRET_KEY
+            SECRET_KEY,
+            {expiresIn:'1h'}
             );
 
         res.status(200).json({token:token});
@@ -56,6 +57,25 @@ const joinUser = async (req,res,next) => {
     }
 }
 
+//only 아이디만 중복체크!
+const checkId = async (req,res,next) => {
+    const {userid} = req.params;
+    console.log(userid);
+    try{
+        const existingUser = await User.findOne({UserId : userid});
+        if (existingUser){
+            throw {status: 404, message:"이미 가입된 계정입니다."};
+            } 
+        res.status(200).end("중복 없음");
+}
+    catch(err){
+        console.log(err);
+        next(err);    
+    }
+}
+
+
+
 
 //회원 탈퇴
 const deleteUser = async(req,res,next) =>{
@@ -86,7 +106,7 @@ const detailUserAuth = async(req,res,next) =>{
     {
         if(TokenUserId !== UserId)
         {
-            throw {status: 401, message:"유효하지 않은 토큰입니다."};
+            throw {status: 401, message:"아이디와 토큰이 일치하지않습니다."};
         }
         
         const user = await User.findOne({UserId,HashPwd:hashedPwd});
@@ -206,4 +226,4 @@ const findId = async(req,res,next) => {
     }
 }
 
-module.exports = {loginUser,joinUser, deleteUser,detailUserAuth,detailUser, chageUser ,changePwd,changePasswordAuth,findId};
+module.exports = {loginUser,joinUser,checkId, deleteUser,detailUserAuth,detailUser, chageUser ,changePwd,changePasswordAuth,findId};

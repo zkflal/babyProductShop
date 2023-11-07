@@ -1,11 +1,12 @@
  const { Router } = require('express');
- const {loginUser,joinUser, deleteUser, detailUserAuth,detailUser ,chageUser, changePwd, changePasswordAuth,findId} = require("../service/userService");
+ const {loginUser,joinUser, checkId,deleteUser, detailUserAuth,detailUser ,chageUser, changePwd, changePasswordAuth,findId} = require("../service/userService");
  const checkToken = require("../../../utils/checkToken");
 
 const router = Router();
 
 router.post("/login",loginUser); //로그인
 router.post("/join",joinUser); //회원가입
+router.post("/join/:userid",checkId); //아이디만 중복체크
 router.delete("/:userid",checkToken,deleteUser); //회원탈퇴
 router.post("/",checkToken,detailUserAuth); //사용자 정보 조회용 본인인증
 router.get("/:userid",checkToken,detailUser); //사용자 정보 조회
