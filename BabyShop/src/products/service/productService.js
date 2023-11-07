@@ -1,5 +1,5 @@
 const productModel = require("../models/productModel");
-const categoryModel = require("../../categories/models/categoryModel");
+const categoryModel = require("../../categories/models/mainCategoryModel");
 
 const findAllProduct = async (req, res, next) => {
   try {
@@ -17,9 +17,12 @@ const findProductById = async (req, res, next) => {
     const product = await productModel.findOne({
       seq,
     });
+    if (!product) {
+      throw new Error("sequence 값이 일치하지 않습니다.");
+    }
     res.status(200).json(product);
   } catch (err) {
-    err.status = 500;
+    err.status = 500; //예외처리 해야함 seq에 맞는 상품이 없을 경우
     next(err);
   }
 };

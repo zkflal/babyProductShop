@@ -1,10 +1,9 @@
-const categoryModel = require("../models/categoryModel");
+const categoryModel = require("../models/mainCategoryModel");
 const productModel = require("../../products/models/productModel");
 
 const findProductByCategory = async (req, res, next) => {
   try {
     const categoryName = req.params.id;
-    console.log(categoryName);
 
     const category = await categoryModel.findOne({ name: categoryName });
 
@@ -22,11 +21,37 @@ const findProductByCategory = async (req, res, next) => {
   }
 };
 
+const findParentCategory = async (req, res, next) => {
+  try {
+    const parents = await categoryModel.find({
+      parent: null,
+    });
+    res.status(200).json(parents);
+  } catch (err) {
+    err.status = 400;
+    next(err);
+  }
+};
+// const findChildCategory = async (req,res,next)=>{
+//   try{
+//     const categories = await categoryModel.find({})
+//     const parent= []
+//     categories.forEach(e=>{
+//       if(e.child===null)
+//     })
+//   }catch(err){
+//     err.status = 400
+//     next(err)
+//   }
+
+// }
+
 const adminCreateCategory = async (req, res, next) => {
-  const { name, child } = req.body;
+  const { name, parent, child } = req.body;
   try {
     await categoryModel.create({
       name,
+      parent,
       child,
     });
     console.log("성공");
@@ -39,13 +64,14 @@ const adminCreateCategory = async (req, res, next) => {
 
 // 관리자 카테고리 수정
 const adminUpdateCategory = async (req, res, next) => {
-  const { name, child } = req.body;
+  const { name, parent, child } = req.body;
   try {
     await categoryModel.updateOne(
       {
         name,
       },
       {
+        parent,
         child,
       }
     );
@@ -76,4 +102,5 @@ module.exports = {
   adminCreateCategory,
   adminUpdateCategory,
   adminDeleteCategory,
+  findParentCategory,
 };
