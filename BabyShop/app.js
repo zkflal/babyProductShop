@@ -17,10 +17,10 @@ const userRouter = require("./src/users/routes/userRouter");
 const adminRouter = require("./src/admin/routes/adminRouter");
 const orderRouter = require("./src/orders/routes/orderRouter");
 const orderAdminRouter = require("./src/orders/routes/orderAdminRouter");
-const productRouter = require("./src/productModel/routes/productRouter");
-const productAdminRouter = require("./src/productModel/routes/productAdminRouter");
-const categoryRouter = require("./src/categoryModel/routes/categoryRouter");
-const categoryAdminRouter = require("./src/categoryModel/routes/categoryAdminRouter");
+const productRouter = require("./src/products/routes/productRouter");
+const productAdminRouter = require("./src/products/routes/productAdminRouter");
+const categoryRouter = require("./src/categories/routes/categoryRouter");
+const categoryAdminRouter = require("./src/categories/routes/categoryAdminRouter");
 const checkAdmin = require("./utils/checkAdmin");
 
 app.use(logger("dev"));
