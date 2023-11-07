@@ -11,15 +11,11 @@ const loginUser  = async(req,res,next) => {
     {
         const user = await User.findOne({UserId});
         if (!user) {    
-            const err = new Error("회원정보를 찾을 수  없습니다.");
-             err.status = 404;
-             throw err;
+             throw {status: 404, message:"회원정보를 찾을 수  없습니다."};
             };
-            
+
         if (hashedPwd !== user.HashPwd){
-            const err = new Error("비밀번호가 일치하지 않습니다.");
-            err.status = 404;
-            throw err;
+            throw {status: 404, message:"비밀번호가 일치하지 않습니다.."};
         }
         token = jwt.sign({
             type:'JWT',
@@ -43,7 +39,7 @@ const joinUser = async (req,res,next) => {
     try{
         const existingUser = await User.findOne({UserId : UserId});
         if (existingUser){
-             return res.status(404).end("사용자가 존재합니다.");
+            throw {status: 404, message:"이미 가입된 계정입니다."};
             } 
          await User.create({
             UserId,
@@ -68,9 +64,7 @@ const deleteUser = async(req,res,next) =>{
     try{
         const existingUser = await User.findOne({UserId : UserId});
         if (!existingUser){
-            const err = new Error("회원정보를 찾을 수  없습니다.");
-            err.status = 404;
-            throw err;
+            throw {status: 404, message:"회원정보를 찾을 수 없습니다."};
          } 
          await User.deleteOne({
             UserId : UserId,
@@ -92,16 +86,12 @@ const detailUserAuth = async(req,res,next) =>{
     {
         if(TokenUserId !== UserId)
         {
-            const err = new Error("유효하지 않은 토큰입니다.");
-             err.status = 401;
-             throw err;
+            throw {status: 401, message:"유효하지 않은 토큰입니다."};
         }
         
         const user = await User.findOne({UserId,HashPwd:hashedPwd});
         if (!user) {    
-            const err = new Error("회원정보를 찾을 수  없습니다.");
-            err.status = 404;
-            throw err;
+            throw {status: 404, message:"회원정보를 찾을 수 없습니다."};
             };
         res.status(200).end("본인인증 성공");
        
@@ -119,9 +109,7 @@ const detailUser = async(req,res,next) => {
         const userdetail = await User.findOne({ UserId : UserId });
         console.log(userdetail);
         if (!userdetail){
-            const err = new Error("회원정보를 찾을 수  없습니다.");
-            err.status = 404;
-            throw err;
+            throw {status: 404, message:"회원정보를 찾을 수 없습니다."};
         }
             res.status(200).json(userdetail);
     }
@@ -193,9 +181,7 @@ const changePasswordAuth = async(req,res,next) =>{
         const user = await User.findOne({UserId,Email});
         console.log(user)
         if (!user) {    
-            const err = new Error("회원정보를 찾을 수  없습니다.");
-             err.status = 404;
-             throw err;
+            throw {status: 404, message:"회원정보를 찾을 수 없습니다."};
             };
         res.status(200).end("본인인증 성공");
     }
