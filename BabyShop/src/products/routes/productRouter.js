@@ -8,7 +8,8 @@ const { Router } = require("express");
 const router = Router();
 
 router.get("/", findAllProduct);
-router.get("/:id", findProductById);
+router.get("/:seq", findProductById);
 router.get("/search/:search", searchProducts);
+
 
 module.exports = router;

@@ -1,16 +1,18 @@
 const {
-  findProductByCategory,
-  adminCreateCategory,
-  adminUpdateCategory,
+  findProductByMainCategory,
+  adminCreateMainCategory,
+  adminCreateSubCategory,
   adminDeleteCategory,
-  findParentCategory,
+  adminUpdateMainCategory,
+  adminUpdateSubCategory,
 } = require("../service/categoryService");
 const { Router } = require("express");
 const router = Router();
 
-router.get("/parents", findParentCategory);
-router.post("/", adminCreateCategory);
-router.put("/", adminUpdateCategory);
-router.delete("/:name", adminDeleteCategory);
+router.post("/main", adminCreateMainCategory);
+router.post("/sub", adminCreateSubCategory);
+router.put("/main", adminUpdateMainCategory);
+router.put("/sub", adminUpdateSubCategory);
+router.delete("/:en_name", adminDeleteCategory);
 
 module.exports = router;

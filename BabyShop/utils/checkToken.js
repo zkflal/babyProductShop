@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 require("dotenv").config({ path: ".env.local" });
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -19,6 +19,8 @@ const checkToken = (req,res,next) => {
           } 
         next(err);    
     }
-}
+    next(err);
+  }
+};
 
 module.exports = checkToken;

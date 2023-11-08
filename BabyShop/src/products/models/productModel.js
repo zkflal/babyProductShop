@@ -8,10 +8,15 @@ const productSchema = new Schema({
   detail: { type: String, required: true },
   condition: { type: String, required: true },
   amount: { type: Number, required: true },
-  category: {
+  seller: { type: String, required: true },
+  main_category: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "Category",
+    ref: "MainCategory",
+  },
+  sub_category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "SubCategory",
   },
 });
 
