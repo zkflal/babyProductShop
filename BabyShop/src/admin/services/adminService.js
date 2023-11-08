@@ -5,18 +5,18 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 // 관리자 로그인
 const adminLogin = async (req, res, next)=>{
-    const {adminId, adminPwd} = req.body;
+    const {AdminId, AdminPwd} = req.body;
     try{
         const admin = await adminModel.findOne({
-            AdminId: adminId,
-            HashPwd: hashPassword(adminPwd)
+            AdminId,
+            HashPwd: hashPassword(AdminPwd)
         });
         if(!admin){
             throw {status:404, message:"어드민 계정이 확인되지 않았습니다."};
         }
         token = jwt.sign({
             type:'JWT',
-            UserId:adminId,
+            UserId:AdminId,
             Admin:true
         },
             SECRET_KEY
