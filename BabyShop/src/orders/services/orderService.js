@@ -3,10 +3,11 @@ const orderModel = require("../../orders/models/orderModel");
 // 특정 유저의 모든 주문을 불러오기
 const findAllOrder = async (req, res, next)=>{
     // 토큰에서 유저 정보 가져오기 (토큰 만들기 전 임시)
-    const UserId = req.decoded.UserId;
+    const {UserId} = req.decoded;
+    console.log(UserId);
     try{
         const orderDatas = await orderModel.find({
-            UserId : UserId
+            UserId
         })
         res.status(200).json(orderDatas);
     }catch(err){
@@ -22,9 +23,7 @@ const findOneOrder = async (req, res, next)=>{
             shortId : id
         });
         if(!orderData){
-            const err = new Error("아이디에 맞는 주문을 찾을 수 없습니다.");
-            err.status = 400;
-            throw err;
+            throw {status:404, message:"아이디에 맞는 주문을 찾을 수 없습니다."};
         }
         res.status(200).json(orderData);
     }catch(err){
@@ -35,16 +34,18 @@ const findOneOrder = async (req, res, next)=>{
 // 주문 추가
 const createOrder = async (req, res, next)=>{
     const {Name, Address, Phone, Email, ProductInfos} = req.body;
+    const {UserId} = req.decoded;
     // 주문 품목 정보에서 가격들을 받아와 합한다.
     let TotalPrice = 0;
-    for(let product of ProductInfos){
-        TotalPrice += product.Price;
+    for(let {Price, Amount} of ProductInfos){
+        TotalPrice += (Price * Amount);
     }
     const Status = "주문완료";
     const Cancel = false;
 
     try{
         await orderModel.create({
+            UserId,
             // req로 받아오는 부분
             Name,
             Address,
@@ -72,11 +73,8 @@ const updateOrder = async (req, res, next)=>{
             shortId: orderId
         });
         if(!isOrder){
-            const err = new Error("아이디에 맞는 주문을 찾을 수 없습니다.");
-            err.status = 400;
-            throw err;
+            throw {status:404, message:"아이디에 맞는 주문을 찾을 수 없습니다."};
         }
-
         await orderModel.updateOne({
             shortId: orderId
         },{
@@ -98,9 +96,7 @@ const cancelOrder = async (req, res, next)=>{
             shortId: id
         });
         if(!isOrder){
-            const err = new Error("아이디에 맞는 주문을 찾을 수 없습니다.");
-            err.status = 400;
-            throw err;
+            throw {status:404, message:"아이디에 맞는 주문을 찾을 수 없습니다."};
         }
 
         await orderModel.updateOne({
@@ -108,7 +104,7 @@ const cancelOrder = async (req, res, next)=>{
         },{
             Cancel: true
         });
-        res.status(200).end();
+        res.status(200).send("성공적으로 주문을 취소했습니다.");
     }catch(err){
         next(err);
     }
@@ -122,9 +118,7 @@ const adminUpdateOrder = async (req, res, next)=>{
             shortId: orderId
         });
         if(!isOrder){
-            const err = new Error("아이디에 맞는 주문을 찾을 수 없습니다.");
-            err.status = 400;
-            throw err;
+            throw {status:404, message:"아이디에 맞는 주문을 찾을 수 없습니다."};
         }
 
         await orderModel.updateOne({
@@ -143,12 +137,10 @@ const adminDeleteOrder = async (req, res, next)=>{
     const {id} = req.params;
     try{
         const isOrder = await orderModel.findOne({
-            shortId: orderId
+            shortId: id
         });
         if(!isOrder){
-            const err = new Error("아이디에 맞는 주문을 찾을 수 없습니다.");
-            err.status = 400;
-            throw err;
+            throw {status:404, message:"아이디에 맞는 주문을 찾을 수 없습니다."};
         }
 
         await orderModel.deleteOne({

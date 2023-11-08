@@ -35,8 +35,6 @@ const loginUser  = async(req,res,next) => {
 //회원가입
 const joinUser = async (req,res,next) => {
     const { UserId, UserName, Address, HashPwd,  Email } = req.body;
-    const hashedPwd = hashPassword(HashPwd);
-    console.log(UserId);
     try{
         const existingUser = await User.findOne({UserId : UserId});
         if (existingUser){
