@@ -60,9 +60,6 @@ app.use("/img", (req, res) => {
   const url = `http://localhost:${port}/images/bmo1.gif`;
   res.redirect(url);
 });
-app.use("/", (req, res)=>{
-  res.send("서버 연결에 성공했습니다.")
-})
 
 
 // catch 404 and forward to error handler
