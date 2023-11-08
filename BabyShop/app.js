@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
-app.use("/users", userRouter);
+app.use("/users",checkToken, userRouter);
 app.use("/admin", adminRouter);
 app.use("/products", checkToken, (req, res, next) => {
   if (req.decoded.Admin) {
