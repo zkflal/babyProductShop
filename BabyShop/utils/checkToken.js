@@ -19,10 +19,6 @@ const checkToken = (req,res,next) => {
           } 
         next(err);    
     }
-<<<<<<< HEAD
-};
-=======
-  }
->>>>>>> b78c4e26fec5e525cef0efe1acd1150b0a0ff400
+}
 
 module.exports = checkToken;
