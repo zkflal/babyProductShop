@@ -22,7 +22,6 @@ const productAdminRouter = require("./src/products/routes/productAdminRouter");
 const categoryRouter = require("./src/categories/routes/categoryRouter");
 const categoryAdminRouter = require("./src/categories/routes/categoryAdminRouter");
 const checkToken = require("./utils/checkToken");
-const checkAdmin = require("./utils/checkAdmin");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -33,22 +32,22 @@ app.use(cors());
 
 app.use("/users", userRouter);
 app.use("/admin", adminRouter);
-app.use("/products", checkToken, checkAdmin, (req, res, next) => {
-  if (req.admin) {
+app.use("/products", checkToken, (req, res, next) => {
+  if (req.decoded.Admin) {
     productAdminRouter(req, res, next);
   } else {
     productRouter(req, res, next);
   }
 });
-app.use("/categories", checkToken, checkAdmin, (req, res, next) => {
-  if (req.admin) {
+app.use("/categories", checkToken, (req, res, next) => {
+  if (req.decoded.Admin) {
     categoryAdminRouter(req, res, next);
   } else {
     categoryRouter(req, res, next);
   }
 });
-app.use("/orders", checkToken, checkAdmin, (req, res, next) => {
-  if (req.admin) {
+app.use("/orders", checkToken, (req, res, next) => {
+  if (req.decoded.Admin) {
     orderAdminRouter(req, res, next);
   } else {
     orderRouter(req, res, next);
