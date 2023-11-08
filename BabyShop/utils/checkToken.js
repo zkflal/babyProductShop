@@ -7,6 +7,7 @@ const checkToken = (req,res,next) => {
     try{
         if(!req.headers.authorization)
         {
+            req.decoded = { Admin:false };
             return next();
         }
         req.decoded = jwt.verify(req.headers.authorization, SECRET_KEY);
