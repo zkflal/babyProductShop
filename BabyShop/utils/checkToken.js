@@ -21,6 +21,5 @@ const checkToken = (req,res,next) => {
     }
     next(err);
   }
-};
 
 module.exports = checkToken;
