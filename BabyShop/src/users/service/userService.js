@@ -10,12 +10,16 @@ const loginUser  = async(req,res,next) => {
     try
     {
         const user = await User.findOne({UserId});
-        if (!user) {    
-             throw {status: 404, message:"회원정보를 찾을 수  없습니다."};
-            };
+        if (!user) {   
+            const err = new Error("회원정보를 찾을 수  없습니다.");
+            err.status = 404;
+            throw err; 
+        }
 
         if (hashedPwd !== user.HashPwd){
-            throw {status: 404, message:"비밀번호가 일치하지 않습니다.."};
+            const err = new Error("비밀번호가 일치하지않습니다.");
+            err.status = 404;
+            throw err; 
         }
         token = jwt.sign({
             type:'JWT',
@@ -104,12 +108,16 @@ const detailUserAuth = async(req,res,next) =>{
     {
         if(TokenUserId !== UserId)
         {
-            throw {status: 401, message:"아이디와 토큰이 일치하지않습니다."};
+            const err = new Error("아이디와 트큰이 일치하지않습니다.");
+            err.status = 401;
+            throw err; 
         }
         
         const user = await User.findOne({UserId,HashPwd:hashedPwd});
         if (!user) {    
-            throw {status: 404, message:"회원정보를 찾을 수 없습니다."};
+            const err = new Error("회원정보를 찾을 수  없습니다.");
+            err.status = 404;
+            throw err; 
             };
         res.status(200).end("본인인증 성공");
        
