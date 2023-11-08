@@ -21,7 +21,7 @@ const productRouter = require("./src/products/routes/productRouter");
 const productAdminRouter = require("./src/products/routes/productAdminRouter");
 const categoryRouter = require("./src/categories/routes/categoryRouter");
 const categoryAdminRouter = require("./src/categories/routes/categoryAdminRouter");
-const checkAdmin = require("./utils/checkAdmin");
+const checkToken = require("./utils/checkToken");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -32,22 +32,22 @@ app.use(cors());
 
 app.use("/users", userRouter);
 app.use("/admin", adminRouter);
-app.use("/products", checkAdmin, (req, res, next) => {
-  if (req.admin) {
+app.use("/products", checkToken, (req, res, next) => {
+  if (req.decoded.Admin) {
     productAdminRouter(req, res, next);
   } else {
     productRouter(req, res, next);
   }
 });
-app.use("/categories", checkAdmin, (req, res, next) => {
-  if (req.admin) {
+app.use("/categories", checkToken, (req, res, next) => {
+  if (req.decoded.Admin) {
     categoryAdminRouter(req, res, next);
   } else {
     categoryRouter(req, res, next);
   }
 });
-app.use("/orders", checkAdmin, (req, res, next) => {
-  if (req.admin) {
+app.use("/orders", checkToken, (req, res, next) => {
+  if (req.decoded.Admin) {
     orderAdminRouter(req, res, next);
   } else {
     orderRouter(req, res, next);
@@ -68,8 +68,8 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  res.status(err.status || 500);
-  res.send(err.message);
+  console.log(err)
+  res.status(err.status || 500).send(err.message);
 });
 
 mongoose

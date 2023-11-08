@@ -1,6 +1,4 @@
 const {
-  findAllProduct,
-  findProductById,
   adminCreateProduct,
   adminUpdateProduct,
   adminDeleteProduct,
