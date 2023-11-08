@@ -19,7 +19,6 @@ const checkToken = (req,res,next) => {
           } 
         next(err);    
     }
-    next(err);
   }
 
 module.exports = checkToken;
