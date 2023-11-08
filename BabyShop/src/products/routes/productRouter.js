@@ -7,9 +7,9 @@ const {
 const { Router } = require("express");
 const router = Router();
 
-router.get("/", findAllProduct);
+router.get("/search", searchProducts);
 router.get("/:seq", findProductById);
-router.get("/search/:search", searchProducts);
+router.get("/", findAllProduct);
 
 
 module.exports = router;

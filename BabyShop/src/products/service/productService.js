@@ -1,12 +1,38 @@
 const productModel = require("../models/productModel");
 const mainCategoryModel = require("../../categories/models/mainCategoryModel");
 const subCategoryModel = require("../../categories/models/subCategoryModel");
-
+const paging = require("../../../utils/paging");
+const sequenceModel = require("../models/sequenceModel");
 // 전체 상품 불러오기
 const findAllProduct = async (req, res, next) => {
+  const {page} = req.query;
   try {
-    const product = await productModel.find({});
-    res.status(200).json(product);
+    const totalProducts = await productModel.countDocuments({});
+    if(!totalProducts){
+      throw {status:404, message:"상품이 없습니다."}
+    }
+    const {
+      startPage,
+      endPage,
+      hideProducts, 
+      maxProducts, 
+      totalPage, 
+      currentPage
+    } = paging(page, totalProducts);
+
+    const products = await productModel.find({})
+      .sort({createAt:-1})
+      .skip(hideProducts)
+      .limit(maxProducts);
+
+    res.status(200).json({
+      products,
+      currentPage,
+      startPage,
+      endPage,
+      maxProducts,
+      totalPage,
+    })
   } catch (err) {
     err.status = 500;
     next(err);
@@ -32,19 +58,45 @@ const findProductById = async (req, res, next) => {
 
 // 상품 검색하기
 const searchProducts = async (req, res, next)=>{
-  const {search} = req.params;
+  const {name, page} = req.query;
   try{
-    const result = await productModel.find({
-      name: { $regex: search } 
+    const totalProducts = await productModel.find({
+      name : { $regex : name }
     })
-    if(result.length <= 0){
-      throw {status: 404, message:"검색 결과가 없습니다."};
+    if(totalProducts.length <= 0){
+      throw {status:404, message:"검색 결과가 없습니다."}
     }
-    res.status(200).json(result);
+    const {
+      startPage,
+      endPage,
+      hideProducts, 
+      maxProducts, 
+      totalPage, 
+      currentPage
+    } = paging(page, totalProducts.length);
+
+    const products = await productModel.find({
+      name : { $regex : name }
+    })
+      .sort({createAt:-1})
+      .skip(hideProducts)
+      .limit(maxProducts);
+    if(products.length <= 0){
+      throw {status: 404, message: "검색 결과가 없습니다."}
+    }
+
+    res.status(200).json({
+      products,
+      currentPage,
+      startPage,
+      endPage,
+      maxProducts,
+      totalPage,
+    })
   }catch(err){
     next(err);
   }
-}
+};
 
 // 관리자 상품 추가
 const adminCreateProduct = async (req, res, next) => {
@@ -63,9 +115,13 @@ const adminCreateProduct = async (req, res, next) => {
     en_name: main_category,
   });
   const subCategory = await subCategoryModel.findOne({ en_name: sub_category });
+  const sequence = await sequenceModel.findOne({
+    _id: "654c7ee524c678e0bd7d7e05",
+  });
+  const seq = sequence.seq;
   try {
     await productModel.create({
-      seq: await productModel.countDocuments(),
+      seq,
       price,
       name,
       img,
@@ -76,6 +132,12 @@ const adminCreateProduct = async (req, res, next) => {
       main_category: mainCategory,
       sub_category: subCategory,
     });
+    await sequenceModel.updateOne(
+      { _id: "654c7ee524c678e0bd7d7e05" },
+      {
+        $inc: { seq: 1 },
+      }
+    );
     console.log("등록 완료");
     res.send("등록이 완료되었습니다.");
   } catch (err) {
@@ -102,7 +164,6 @@ const adminUpdateProduct = async (req, res) => {
   const mainCategory = await mainCategoryModel.findOne({
     en_name: main_category,
   });
-  console.log(mainCategory);
   const subCategory = await subCategoryModel.findOne({
     en_name: sub_category,
   });

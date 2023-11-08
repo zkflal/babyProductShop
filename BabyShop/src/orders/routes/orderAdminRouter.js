@@ -1,7 +1,7 @@
 const router = require("express").Router();
-const {adminUpdateOrder, adminDeleteOrder} = require("../services/orderService");
+const {adminUpdate, adminDelete} = require("../services/orderService");
 
-router.put('/', adminUpdateOrder);
-router.delete('/:id', adminDeleteOrder);
+router.put('/', adminUpdate);
+router.delete('/:id', adminDelete);
 
 module.exports = router;
