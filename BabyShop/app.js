@@ -30,11 +30,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
-app.use("/", (req, res)=>{
-  res.send("서버 연결에 성공했습니다.")
-})
+app.get("/", (req, res) => {
+  res.send("서버 연결에 성공했습니다.");
+});
 
-app.use("/users",checkToken, userRouter);
+app.use("/users", checkToken, userRouter);
 app.use("/admin", adminRouter);
 app.use("/products", checkToken, (req, res, next) => {
   if (req.decoded.Admin) {
@@ -72,7 +72,7 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  console.log(err)
+  console.log(err);
   res.status(err.status || 500).send(err.message);
 });
 
