@@ -1,5 +1,6 @@
 const productModel = require("../models/productModel");
-const categoryModel = require("../../categories/models/mainCategoryModel");
+const mainCategoryModel = require("../../categories/models/mainCategoryModel");
+const subCategoryModel = require("../../categories/models/subCategoryModel");
 
 const findAllProduct = async (req, res, next) => {
   try {
@@ -18,7 +19,7 @@ const findProductById = async (req, res, next) => {
       seq,
     });
     if (!product) {
-      throw new Error("sequence 값이 일치하지 않습니다.");
+      throw new Error("찾는 sequence와 같은 값의 상품이 없습니다.");
     }
     res.status(200).json(product);
   } catch (err) {
@@ -28,9 +29,21 @@ const findProductById = async (req, res, next) => {
 };
 
 const adminCreateProduct = async (req, res, next) => {
-  const { price, name, img, detail, condition, amount, categoryName } =
-    req.body;
-  const category = await categoryModel.findOne({ name: categoryName });
+  const {
+    price,
+    name,
+    img,
+    detail,
+    condition,
+    amount,
+    seller,
+    main_category,
+    sub_category,
+  } = req.body;
+  const mainCategory = await mainCategoryModel.findOne({
+    en_name: main_category,
+  });
+  const subCategory = await subCategoryModel.findOne({ en_name: sub_category });
   try {
     await productModel.create({
       seq: await productModel.countDocuments(),
@@ -40,7 +53,9 @@ const adminCreateProduct = async (req, res, next) => {
       detail,
       condition,
       amount,
-      category: category._id,
+      seller,
+      main_category: mainCategory,
+      sub_category: subCategory,
     });
     console.log("등록 완료");
     res.send("등록이 완료되었습니다.");
@@ -52,9 +67,26 @@ const adminCreateProduct = async (req, res, next) => {
 
 // 관리자 상품 수정
 const adminUpdateProduct = async (req, res) => {
-  const { seq, price, name, img, detail, condition, amount, categoryName } =
-    req.body;
-  const category = await categoryModel.findOne({ name: categoryName });
+  const {
+    seq,
+    price,
+    name,
+    img,
+    detail,
+    condition,
+    amount,
+    seller,
+    main_category,
+    sub_category,
+  } = req.body;
+
+  const mainCategory = await mainCategoryModel.findOne({
+    en_name: main_category,
+  });
+  console.log(mainCategory);
+  const subCategory = await subCategoryModel.findOne({
+    en_name: sub_category,
+  });
   try {
     await productModel.updateOne(
       {
@@ -67,7 +99,9 @@ const adminUpdateProduct = async (req, res) => {
         detail,
         condition,
         amount,
-        category: category._id,
+        seller,
+        main_category: mainCategory,
+        sub_category: subCategory,
       }
     );
     res.status(201).send("상품이 수정되었습니다.");

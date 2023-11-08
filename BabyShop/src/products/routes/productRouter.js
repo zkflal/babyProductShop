@@ -10,6 +10,6 @@ const { Router } = require("express");
 const router = Router();
 
 router.get("/", findAllProduct);
-router.get("/:id", findProductById);
+router.get("/:seq", findProductById);
 
 module.exports = router;
