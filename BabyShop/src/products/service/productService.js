@@ -2,6 +2,7 @@ const productModel = require("../models/productModel");
 const mainCategoryModel = require("../../categories/models/mainCategoryModel");
 const subCategoryModel = require("../../categories/models/subCategoryModel");
 
+// 전체 상품 불러오기
 const findAllProduct = async (req, res, next) => {
   try {
     const product = await productModel.find({});
@@ -12,6 +13,7 @@ const findAllProduct = async (req, res, next) => {
   }
 };
 
+// 아이디로 상품 불러오기
 const findProductById = async (req, res, next) => {
   const { seq } = req.params;
   try {
@@ -28,6 +30,23 @@ const findProductById = async (req, res, next) => {
   }
 };
 
+// 상품 검색하기
+const searchProducts = async (req, res, next)=>{
+  const {search} = req.params;
+  try{
+    const result = await productModel.find({
+      name: { $regex: search } 
+    })
+    if(result.length <= 0){
+      throw {status: 404, message:"검색 결과가 없습니다."};
+    }
+    res.status(200).json(result);
+  }catch(err){
+    next(err);
+  }
+}
+
+// 관리자 상품 추가
 const adminCreateProduct = async (req, res, next) => {
   const {
     price,
@@ -128,6 +147,7 @@ const adminDeleteProduct = async (req, res) => {
 module.exports = {
   findAllProduct,
   findProductById,
+  searchProducts,
   adminCreateProduct,
   adminUpdateProduct,
   adminDeleteProduct,

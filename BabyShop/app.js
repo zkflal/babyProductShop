@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
-app.use("/users", userRouter);
+app.use("/users",checkToken, userRouter);
 app.use("/admin", adminRouter);
 app.use("/products", checkToken, (req, res, next) => {
   if (req.decoded.Admin) {
@@ -68,8 +68,8 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  res.status(err.status || 500);
-  res.send(err.message);
+  console.log(err)
+  res.status(err.status || 500).send(err.message);
 });
 
 mongoose
