@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
-app.use("/", (req, res)=>{
+app.get("/", (req, res)=>{
   res.send("서버 연결에 성공했습니다.")
 })
 
