@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
-app.use("/users",checkToken, userRouter);
+app.use("/users", checkToken, userRouter);
 app.use("/admin", adminRouter);
 app.use("/products", checkToken, (req, res, next) => {
   if (req.decoded.Admin) {
@@ -60,7 +60,9 @@ app.use("/img", (req, res) => {
   const url = `http://localhost:${port}/images/bmo1.gif`;
   res.redirect(url);
 });
-
+app.use("/", (req, res) => {
+  res.send("서버 연결에 성공했습니다.");
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -69,7 +71,7 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  console.log(err)
+  console.log(err);
   res.status(err.status || 500).send(err.message);
 });
 

@@ -1,7 +1,7 @@
 const productModel = require("../models/productModel");
 const mainCategoryModel = require("../../categories/models/mainCategoryModel");
 const subCategoryModel = require("../../categories/models/subCategoryModel");
-
+const sequenceModel = require("../models/sequenceModel");
 // 전체 상품 불러오기
 const findAllProduct = async (req, res, next) => {
   try {
@@ -31,20 +31,20 @@ const findProductById = async (req, res, next) => {
 };
 
 // 상품 검색하기
-const searchProducts = async (req, res, next)=>{
-  const {search} = req.params;
-  try{
+const searchProducts = async (req, res, next) => {
+  const { search } = req.params;
+  try {
     const result = await productModel.find({
-      name: { $regex: search } 
-    })
-    if(result.length <= 0){
-      throw {status: 404, message:"검색 결과가 없습니다."};
+      name: { $regex: search },
+    });
+    if (result.length <= 0) {
+      throw { status: 404, message: "검색 결과가 없습니다." };
     }
     res.status(200).json(result);
-  }catch(err){
+  } catch (err) {
     next(err);
   }
-}
+};
 
 // 관리자 상품 추가
 const adminCreateProduct = async (req, res, next) => {
@@ -63,9 +63,13 @@ const adminCreateProduct = async (req, res, next) => {
     en_name: main_category,
   });
   const subCategory = await subCategoryModel.findOne({ en_name: sub_category });
+  const sequence = await sequenceModel.findOne({
+    _id: "654c7ee524c678e0bd7d7e05",
+  });
+  const seq = sequence.seq;
   try {
     await productModel.create({
-      seq: await productModel.countDocuments(),
+      seq,
       price,
       name,
       img,
@@ -76,6 +80,12 @@ const adminCreateProduct = async (req, res, next) => {
       main_category: mainCategory,
       sub_category: subCategory,
     });
+    await sequenceModel.updateOne(
+      { _id: "654c7ee524c678e0bd7d7e05" },
+      {
+        $inc: { seq: 1 },
+      }
+    );
     console.log("등록 완료");
     res.send("등록이 완료되었습니다.");
   } catch (err) {
