@@ -1,7 +1,7 @@
 const router = require("express").Router();
-const {adminLogin, adminJoin} = require("../services/adminService");
+const {adminLogin, adminSignup} = require("../services/adminService");
 
 router.post('/login', adminLogin);
-router.post('/join', adminJoin);
+router.post('/signup', adminSignup);
 
 module.exports = router;

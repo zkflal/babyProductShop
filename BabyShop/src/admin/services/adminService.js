@@ -5,20 +5,18 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 // 관리자 로그인
 const adminLogin = async (req, res, next)=>{
-    const {admin_id, password} = req.body;
-    const hashedPwd = hashPassword(password);
+    const {adminId, adminPwd} = req.body;
     try{
         const admin = await adminModel.findOne({
-            AdminId: admin_id,
-            HashPwd: hashedPwd
+            AdminId: adminId,
+            HashPwd: hashPassword(adminPwd)
         });
-        console.log(admin);
         if(!admin){
             throw {status:404, message:"어드민 계정이 확인되지 않았습니다."};
         }
         token = jwt.sign({
             type:'JWT',
-            UserId:admin_id,
+            UserId:adminId,
             Admin:true
         },
             SECRET_KEY
@@ -29,8 +27,8 @@ const adminLogin = async (req, res, next)=>{
     } 
 }
 
-const adminJoin = async (req, res, next)=>{
-    const { AdminId, HashPwd } = req.body;
+const adminSignup = async (req, res, next)=>{
+    const { AdminId, AdminPwd } = req.body;
     try{
         const isAdmin = await adminModel.findOne({AdminId});
         if(isAdmin){
@@ -38,7 +36,7 @@ const adminJoin = async (req, res, next)=>{
         }
         await adminModel.create({
             AdminId, 
-            HashPwd:hashPassword(HashPwd)
+            HashPwd:hashPassword(AdminPwd)
         })
         res.status(200).send("성공적으로 관리자 계정을 생성했습니다.")
     }catch(err){
@@ -46,4 +44,4 @@ const adminJoin = async (req, res, next)=>{
     }
 }
 
-module.exports = {adminLogin, adminJoin};
+module.exports = {adminLogin, adminSignup};

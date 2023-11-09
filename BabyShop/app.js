@@ -29,6 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
+app.use(express.static("public"));
 
 app.use("/users", checkToken, userRouter);
 app.use("/admin", adminRouter);
@@ -54,12 +55,6 @@ app.use("/orders", checkToken, (req, res, next) => {
   }
 });
 
-// 이미지 불러오기 (테스트)
-app.use(express.static("public"));
-app.use("/img", (req, res) => {
-  const url = `http://localhost:${port}/images/bmo1.gif`;
-  res.redirect(url);
-});
 app.use("/", (req, res) => {
   res.send("서버 연결에 성공했습니다.");
 });

@@ -1,10 +1,9 @@
 const orderModel = require("../../orders/models/orderModel");
 
 // 특정 유저의 모든 주문을 불러오기
-const findAllOrder = async (req, res, next)=>{
+const findAllByUserId = async (req, res, next)=>{
     // 토큰에서 유저 정보 가져오기 (토큰 만들기 전 임시)
     const {UserId} = req.decoded;
-    console.log(UserId);
     try{
         const orderDatas = await orderModel.find({
             UserId
@@ -16,7 +15,7 @@ const findAllOrder = async (req, res, next)=>{
 }
 
 // 주문 정보 불러오기
-const findOneOrder = async (req, res, next)=>{
+const findOneByOrderId = async (req, res, next)=>{
     const {id} = req.params;
     try{
         const orderData = await orderModel.findOne({
@@ -32,7 +31,7 @@ const findOneOrder = async (req, res, next)=>{
 }
 
 // 주문 추가
-const createOrder = async (req, res, next)=>{
+const create = async (req, res, next)=>{
     const {Name, Address, Phone, Email, ProductInfos} = req.body;
     const {UserId} = req.decoded;
     // 주문 품목 정보에서 가격들을 받아와 합한다.
@@ -57,7 +56,7 @@ const createOrder = async (req, res, next)=>{
             Status,
             Cancel
         });
-        res.status(201).send("성공적으로 주문이 완료되었습니다.")
+        res.status(200).send("성공적으로 주문이 완료되었습니다.")
     }catch(err){
         err.status = 400;
         next(err);
@@ -66,7 +65,7 @@ const createOrder = async (req, res, next)=>{
 }
 
 // 주문 정보 수정
-const updateOrder = async (req, res, next)=>{
+const update = async (req, res, next)=>{
     let {orderId, Name, Address, Phone} = req.body;
     try{
         const isOrder = await orderModel.findOne({
@@ -89,7 +88,7 @@ const updateOrder = async (req, res, next)=>{
 }
 
 // 주문 취소
-const cancelOrder = async (req, res, next)=>{
+const cancel = async (req, res, next)=>{
     const {id} = req.params;
     try{
         const isOrder = await orderModel.findOne({
@@ -111,7 +110,7 @@ const cancelOrder = async (req, res, next)=>{
 }
 
 // 관리자 주문 상태 수정
-const adminUpdateOrder = async (req, res, next)=>{
+const adminUpdate = async (req, res, next)=>{
     const {orderId, Status} = req.body;
     try{
         const isOrder = await orderModel.findOne({
@@ -133,7 +132,7 @@ const adminUpdateOrder = async (req, res, next)=>{
 }
 
 // 관리자 주문 삭제
-const adminDeleteOrder = async (req, res, next)=>{
+const adminDelete = async (req, res, next)=>{
     const {id} = req.params;
     try{
         const isOrder = await orderModel.findOne({
@@ -152,4 +151,12 @@ const adminDeleteOrder = async (req, res, next)=>{
     }
 }
 
-module.exports = {findAllOrder, findOneOrder, createOrder, updateOrder, cancelOrder, adminUpdateOrder, adminDeleteOrder};
+module.exports = {
+    findAllByUserId, 
+    findOneByOrderId, 
+    create, 
+    update, 
+    cancel, 
+    adminUpdate, 
+    adminDelete
+};
