@@ -5,7 +5,7 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 // 관리자 로그인
 const adminLogin = async (req, res, next)=>{
-    const {adminId, adminPwd} = req.body;
+    const {AdminId, AdminPwd} = req.body;
     try{
         const admin = await adminModel.findOne({
             AdminId: adminId,
