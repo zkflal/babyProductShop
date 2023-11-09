@@ -13,7 +13,7 @@ const ProductInfosType = new mongoose.Schema({
 const orderSchema = new mongoose.Schema({
     shortId,    // OrderId
 
-    UserId: {type: String, required: true},
+    UserId: {type: String},
     Name: {type: String, required: true},
     Address: {type: String, required: true},
     Phone: {type: String, required: true},

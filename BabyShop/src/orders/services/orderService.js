@@ -33,7 +33,10 @@ const findOneByOrderId = async (req, res, next)=>{
 // 주문 추가
 const create = async (req, res, next)=>{
     const {Name, Address, Phone, Email, ProductInfos} = req.body;
-    const {UserId} = req.decoded;
+    let {UserId} = req.decoded;
+    if(!UserId){
+        UserId = null;
+    }
     // 주문 품목 정보에서 가격들을 받아와 합한다.
     let TotalPrice = 0;
     for(let {Price, Amount} of ProductInfos){
@@ -49,7 +52,7 @@ const create = async (req, res, next)=>{
             Name,
             Address,
             Phone,
-            Email,
+            Email,      // 고정값(비회원)
             ProductInfos,
             // 생성하는 부분
             TotalPrice,
