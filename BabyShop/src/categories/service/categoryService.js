@@ -15,7 +15,7 @@ const findProductByCategory = async (req, res, next) => {
       });
       res.status(200).json(products);
     } else {
-      const products = await productModel({
+      const products = await productModel.find({
         sub_category: sub,
       });
       res.status(200).json(products);
