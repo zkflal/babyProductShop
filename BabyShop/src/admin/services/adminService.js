@@ -8,15 +8,15 @@ const adminLogin = async (req, res, next)=>{
     const {AdminId, AdminPwd} = req.body;
     try{
         const admin = await adminModel.findOne({
-            AdminId: adminId,
-            HashPwd: hashPassword(adminPwd)
+            AdminId,
+            HashPwd: hashPassword(AdminPwd)
         });
         if(!admin){
             throw {status:404, message:"어드민 계정이 확인되지 않았습니다."};
         }
         token = jwt.sign({
             type:'JWT',
-            UserId:adminId,
+            UserId:AdminId,
             Admin:true
         },
             SECRET_KEY
