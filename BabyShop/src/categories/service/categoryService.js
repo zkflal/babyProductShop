@@ -1,25 +1,73 @@
 const mainCategoryModel = require("../models/mainCategoryModel");
 const subCategoryModel = require("../models/subCategoryModel");
 const productModel = require("../../products/models/productModel");
+const paging = require("../../../utils/paging");
 
 //카테고리별 상품 찾기
-const findProductByCategory = async (req, res, next) => {
+const findProductByCategory = async (req, res, next) =>{ 
+  const {en_name, page} = req.query;
   try {
-    const { en_name } = req.params; //카테고리의 영어이름 (아직 서브인지 메인인지 모름)
-    console.log(en_name);
     const sub = await subCategoryModel.findOne({ en_name });
+
+
+    // main category
     if (!sub) {
       const main = await mainCategoryModel.findOne({ en_name });
-      const products = await productModel.find({
+      const totalProducts = await productModel.find({
         main_category: main,
       });
-      res.status(200).json(products);
+      const {
+        startPage,
+        endPage,
+        hideProducts, 
+        maxProducts, 
+        totalPage, 
+        currentPage
+      } = paging(page, totalProducts.length);
+      const products = await productModel.find({
+        main_category: main,
+      })
+      .sort({createAt:-1})
+      .skip(hideProducts)
+      .limit(maxProducts);
+      res.status(200).json({
+        products,
+        currentPage,
+        startPage,
+        endPage,
+        maxProducts,
+        totalPage,
+      });
+
+
+    // sub category
     } else {
-      const products = await productModel({
+      const totalProducts = await productModel.find({
         sub_category: sub,
       });
-      res.status(200).json(products);
-    }
+      const {
+        startPage,
+        endPage,
+        hideProducts, 
+        maxProducts, 
+        totalPage, 
+        currentPage
+      } = paging(page, totalProducts.length);
+      const products = await productModel.find({
+        sub_category: sub,
+      })
+      .sort({createAt:-1})
+      .skip(hideProducts)
+      .limit(maxProducts);
+      res.status(200).json({
+        products,
+        currentPage,
+        startPage,
+        endPage,
+        maxProducts,
+        totalPage,
+      });
+    }    
   } catch (err) {
     next(err);
   }
@@ -54,7 +102,6 @@ const adminCreateMainCategory = async (req, res, next) => {
       name,
       en_name,
     });
-    console.log("성공");
     res.status(200).send("카테고리가 생성되었습니다.");
   } catch (err) {
     err.status = 400;
@@ -76,7 +123,6 @@ const adminCreateSubCategory = async (req, res, next) => {
         $push: { child: sub },
       }
     );
-    console.log("성공");
     res.status(200).send("카테고리가 생성되었습니다.");
   } catch (err) {
     err.status = 400;
@@ -109,12 +155,9 @@ const adminUpdateMainCategory = async (req, res, next) => {
 //관리자 서브카테고리 수정
 const adminUpdateSubCategory = async (req, res, next) => {
   const { en_name, changed_name, changed_en_name, parent } = req.body;
-  console.log(en_name, changed_name, changed_en_name, parent);
   try {
     const subCategory = await subCategoryModel.findOne({ en_name });
-    console.log("sub: ", subCategory.parent);
     const mainCategory = await mainCategoryModel.findOne({ en_name: parent });
-    console.log("main: ", mainCategory);
     await mainCategoryModel.updateOne(
       { _id: subCategory.parent },
       {
@@ -144,10 +187,8 @@ const adminUpdateSubCategory = async (req, res, next) => {
 // 관리자 카테고리 삭제
 const adminDeleteCategory = async (req, res, next) => {
   const { en_name } = req.params;
-  console.log(en_name);
   try {
     const sub = await subCategoryModel.findOne({ en_name });
-    console.log(sub);
     if (!sub) {
       const main = await mainCategoryModel.findOne({ en_name });
       await subCategoryModel.deleteMany({
