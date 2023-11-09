@@ -1,6 +1,5 @@
  const { Router } = require('express');
  const {loginUser,joinUser, checkId,deleteUser, detailUserAuth,detailUser ,chageUser, changePwd, changePasswordAuth,findId} = require("../service/userService");
-
 const router = Router();
 
 router.post("/login",loginUser); //로그인

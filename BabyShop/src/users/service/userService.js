@@ -2,6 +2,7 @@ const {User} = require("../models/user");
 const hashPassword = require("../../../utils/hashedPwd");
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.SECRET_KEY;
+const mailer = require("../../../utils/mail");
 
 //로그인
 const loginUser  = async(req,res,next) => {
@@ -202,6 +203,13 @@ const changePasswordAuth = async(req,res,next) =>{
         if (!user) {    
             throw {status: 404, message:"회원정보를 찾을 수 없습니다."};
             };
+
+        let emailParams ={
+            toEmail: Email,
+            subject : "비밀번호 재설정 안내입니다.",
+            text: `안녕하세요 애기어때입니다.\n 비밀번호 재설정을 원하시면 하단에 있는 링크를 통해 변경부탁드립니다.\n 변경을 원치 않으실 경우 이 메일은 무시하셔도 됩니다 : )` 
+        };
+        mailer.sendEmail(emailParams);
         res.status(200).end("본인인증 성공");
     }
     catch(err){
@@ -224,5 +232,7 @@ const findId = async(req,res,next) => {
         next(err);
     }
 }
+
+
 
 module.exports = {loginUser,joinUser,checkId, deleteUser,detailUserAuth,detailUser, chageUser ,changePwd,changePasswordAuth,findId};
