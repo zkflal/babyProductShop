@@ -35,6 +35,7 @@ const loginUser  = async(req,res,next) => {
 //회원가입
 const joinUser = async (req,res,next) => {
     const { UserId, UserName, Address, HashPwd,  Email } = req.body;
+    const hashedPwd = hashPassword(HashPwd);
     try{
         const existingUser = await User.findOne({UserId : UserId});
         if (existingUser){
@@ -44,7 +45,7 @@ const joinUser = async (req,res,next) => {
             UserId,
             UserName,
             Address,
-            HashPwd: HashPwd,
+            HashPwd: hashedPwd,
             Email,
         });
         res.status(200).end("회원가입성공");
