@@ -23,7 +23,7 @@ const loginUser  = async(req,res,next) => {
             UserId:UserId,
             Admin:false},
             SECRET_KEY,
-            {expiresIn:'1h'}
+            {expiresIn:'1d'}
             );
 
         res.status(200).json({token:token});
@@ -160,9 +160,14 @@ catch(err){
 
 //비밀번호 변경
 const changePwd = async(req,res,next) => {
-    const UserId = req.decoded.UserId;
+    const UserId = req.params.userid;
     const newHashPwd  = req.body.HashPwd;
     const hashedPwd = hashPassword(newHashPwd);
+
+    const existingUser = await User.findOne({ UserId });
+    if (!existingUser) {
+        return res.status(404).json({ error: 'User not found' });
+    }
 
     try{
         const user = await User.findOneAndUpdate(
