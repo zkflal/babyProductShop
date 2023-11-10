@@ -46,7 +46,7 @@ const joinUser = async (req,res,next) => {
             UserId,
             UserName,
             Address,
-            HashPwd: hashPassword(HashPwd),
+            HashPwd: hashedPwd,
             Email,
         });
         res.status(200).end("회원가입성공");
