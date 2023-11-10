@@ -1,5 +1,6 @@
 const { Schema } = require("mongoose");
 const mongoose = require("mongoose");
+
 const productSchema = new Schema({
   seq: { type: Number, required: true },
   price: { type: Number, required: true },
