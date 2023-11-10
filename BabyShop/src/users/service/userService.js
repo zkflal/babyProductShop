@@ -203,7 +203,7 @@ const changePasswordAuth = async(req,res,next) =>{
                 <div> 안녕하세요 애기어때입니다.</div>
                 <div>비밀번호 재설정을 원하시면 하단에 있는 링크를 통해 변경부탁드립니다.</div>
                 <div>변경을 원치 않으실 경우 이 메일은 무시하셔도 됩니다.</div>
-                '<p>  http://kdt-sw-7-team02.elicecoding.com/pw-change/?UserId=${UserId} </p>'   
+                <a href="http://kdt-sw-7-team02.elicecoding.com/pw-change/?UserId=${UserId}">클릭하기</a>
         </div>`, 
         };
         mailer.sendEmail(emailParams);
