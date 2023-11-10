@@ -197,10 +197,17 @@ const changePasswordAuth = async(req,res,next) =>{
         let emailParams ={
             toEmail: Email,
             subject : "비밀번호 재설정 안내입니다.",
-            text: `안녕하세요 애기어때입니다.\n 비밀번호 재설정을 원하시면 하단에 있는 링크를 통해 변경부탁드립니다.\n 변경을 원치 않으실 경우 이 메일은 무시하셔도 됩니다 : )\n
-            http://kdt-sw-7-team02.elicecoding.com/pw-change/?UserId=${UserId}` 
+            html: `
+            <div>
+                <h2>비밀번호 재설정 안내입니다.</h2>
+                <div> 안녕하세요 애기어때입니다.</div>
+                <div>비밀번호 재설정을 원하시면 하단에 있는 링크를 통해 변경부탁드립니다.</div>
+                <div>변경을 원치 않으실 경우 이 메일은 무시하셔도 됩니다.</div>
+                <a href="http://kdt-sw-7-team02.elicecoding.com/pw-change/?UserId=${UserId}">클릭하기</a>
+        </div>`, 
         };
         mailer.sendEmail(emailParams);
+        console.log(emailParams.html);
         res.status(200).end("본인인증 성공");
     }
     catch(err){
@@ -226,3 +233,5 @@ const findId = async(req,res,next) => {
 
 
 module.exports = {loginUser,joinUser,checkId, deleteUser,detailUserAuth,detailUser, chageUser ,changePwd,changePasswordAuth,findId};
+
+
