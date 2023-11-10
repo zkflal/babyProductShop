@@ -160,18 +160,20 @@ catch(err){
 
 //비밀번호 변경
 const changePwd = async(req,res,next) => {
-    const UserId = req.params.userid;
+    const userId = req.params.userid;
     const newHashPwd  = req.body.HashPwd;
     const hashedPwd = hashPassword(newHashPwd);
+    console.log(`userId: ${userId}`)
 
-    const existingUser = await User.findOne({ UserId });
+    const existingUser = await User.findOne({UserId: userId });
     if (!existingUser) {
-        return res.status(404).json({ error: 'User not found' });
+        console.log("404Error")
+	return res.status(404).json({ error: 'User not found' });
     }
 
     try{
         const user = await User.findOneAndUpdate(
-            {UserId : UserId},
+            {UserId : userId},
             {
                 $set:{
                     HashPwd: hashedPwd,
@@ -179,7 +181,7 @@ const changePwd = async(req,res,next) => {
             },
             {new: true},
             )
-            res.status(200).json(user);
+            return res.status(200).json(user);
         }
     catch(err){
              err.status = 400;
